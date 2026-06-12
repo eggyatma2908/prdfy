@@ -115,6 +115,9 @@ const MODEL_GENERATION_CONFIGS: Record<string, {
 const ALLOWED_ORIGINS = new Set([
   'http://localhost:5173',
   'http://localhost:3000',
+  ...(process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+    : []),
 ]);
 
 const FETCH_TIMEOUT_MS = 30_000;
