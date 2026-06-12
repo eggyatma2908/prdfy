@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Mail, Lock, User, X, Cpu, AlertCircle } from 'lucide-react';
+import { Mail, Lock, User, X, Rocket, AlertCircle } from 'lucide-react';
 import { signIn, signUp } from '../lib/auth-client';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -135,7 +135,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {/* Header */}
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/10">
-                  <Cpu className="w-6 h-6 animate-pulse" />
+                  <Rocket className="w-6 h-6 animate-pulse" />
                 </div>
                 <h3 className="text-2xl font-extrabold text-foreground tracking-tight mt-2">
                   {isSignUp ? t('auth.welcomeTitleSignup') : t('auth.welcomeTitleSignin')}

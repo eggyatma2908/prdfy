@@ -3,7 +3,7 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
-  Cpu,
+  Rocket,
   User,
   Layers,
   Tag,
@@ -202,7 +202,7 @@ export const PRDGeneratorForm: React.FC<PRDGeneratorFormProps> = ({ onGenerate, 
         <div className="glass-panel p-5 sm:p-10 rounded-3xl text-center space-y-8 relative overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg bg-white dark:bg-zinc-900">
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="w-16 h-16 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-900 dark:text-zinc-100 shadow-sm">
-              <Cpu className="w-8 h-8 animate-pulse text-zinc-700 dark:text-zinc-300" />
+              <Rocket className="w-8 h-8 animate-pulse text-zinc-700 dark:text-zinc-300" />
             </div>
             <div className="space-y-1">
               <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-100">{t('form.loadingTitle')}</h3>
@@ -319,7 +319,7 @@ export const PRDGeneratorForm: React.FC<PRDGeneratorFormProps> = ({ onGenerate, 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-100/80 dark:border-zinc-800/85 animate-slideDown">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-600 dark:text-white flex items-center space-x-1">
-                    <Cpu className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 animate-pulse" />
+                    <Rocket className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 animate-pulse" />
                     <span>{t('form.prdTitle')}</span>
                   </label>
                   <input

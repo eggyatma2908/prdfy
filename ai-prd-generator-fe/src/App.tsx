@@ -3,7 +3,7 @@ import { PRDGeneratorForm } from './components/PRDGeneratorForm';
 import { ExportModal } from './components/ExportModal';
 import { ToastContainer } from './components/ToastContainer';
 import { ConfirmModal } from './components/ConfirmModal';
-import { Cpu, LogOut, LogIn, Menu, Sparkles, X, Sun, Moon, Crown, MessageSquare } from 'lucide-react';
+import { Rocket, LogOut, LogIn, Menu, Sparkles, X, Sun, Moon, Crown, MessageSquare } from 'lucide-react';
 import { HistorySidebar } from './components/HistorySidebar';
 import { AuthModal } from './components/AuthModal';
 import { authClient } from './lib/auth-client';
@@ -12,6 +12,7 @@ import { WorkspaceProvider } from './context/WorkspaceContext';
 import { useWorkspace } from './hooks/useWorkspace';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { FeedbackModal } from './components/FeedbackModal';
+import { LandingPage } from './components/LandingPage';
 
 const PRDEditor = React.lazy(() =>
   import('./components/PRDEditor').then((m) => ({ default: m.PRDEditor }))
@@ -19,9 +20,11 @@ const PRDEditor = React.lazy(() =>
 
 function AppContent() {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const {
     user,
     isSubscribed,
+    isSuperAdmin,
     documents,
     versions,
     activeDocumentId,
@@ -36,7 +39,6 @@ function AppContent() {
     isUpgradeModalOpen,
     isUpgrading,
     toasts,
-    creatorEmail,
     showToast,
     removeToast,
     loadDocuments,
@@ -62,18 +64,24 @@ function AppContent() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-grid-glow dark:bg-zinc-950 flex items-center justify-center p-4">
+      <>
+        <LandingPage
+          onStartClick={() => setIsAuthOpen(true)}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
         <AuthModal
-          isOpen={true}
-          onClose={() => { }}
+          isOpen={isAuthOpen}
+          onClose={() => setIsAuthOpen(false)}
           onSuccess={() => {
+            setIsAuthOpen(false);
             sessionStorage.setItem('just_logged_in', 'true');
             loadDocuments();
           }}
-          showCloseButton={false}
+          showCloseButton={true}
         />
         <ToastContainer toasts={toasts} onRemove={removeToast} />
-      </div>
+      </>
     );
   }
 
@@ -246,7 +254,7 @@ function AppContent() {
                 </button>
               )}
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center shrink-0">
-                <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-white dark:text-zinc-900 animate-pulse" />
+                <Rocket className="w-4 h-4 sm:w-5 sm:h-5 text-white dark:text-zinc-900 animate-pulse" />
               </div>
               <div>
                 <h1 className="text-xs sm:text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-100 font-sans m-0 leading-tight">
@@ -289,7 +297,7 @@ function AppContent() {
 
               {user ? (
                 <div className="flex items-center space-x-1.5 sm:space-x-2.5">
-                  {user?.tier === 'superadministrator' ? (
+                  {isSuperAdmin ? (
                     <span className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 bg-violet-50/80 dark:bg-violet-950/40 px-2 sm:px-2.5 py-1 rounded-full border border-violet-200 dark:border-violet-900/50 flex items-center space-x-1 shadow-sm shrink-0" title={t('common.superadmin')}>
                       <Crown className="w-3.5 h-3.5 text-violet-500 animate-pulse" />
                       <span className="hidden sm:inline">{t('common.superadmin')}</span>
@@ -442,31 +450,7 @@ function AppContent() {
                 ) : (
                   <span>{t('upgradeModal.action')}</span>
                 )}
-              </button>
-
-              {user?.email && creatorEmail && user.email === creatorEmail && (
-                <button
-                  onClick={() => upgradeSubscription('superadministrator')}
-                  disabled={isUpgrading}
-                  className="w-full py-3 bg-violet-600 hover:bg-violet-750 text-white rounded-2xl font-bold text-xs tracking-wider uppercase shadow-sm transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 border border-violet-500"
-                >
-                  {isUpgrading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      <span>{t('upgradeModal.verifying')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Crown className="w-4 h-4 text-white" />
-                      <span>{t('upgradeModal.actionSuper')}</span>
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
+              </button>            </div>
           </motion.div>
         </div>
       )}
