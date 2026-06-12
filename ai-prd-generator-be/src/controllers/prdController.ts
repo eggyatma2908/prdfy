@@ -36,7 +36,11 @@ export class PRDController {
   createDocument = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-      if (user?.tier === 'superadministrator') {
+      const rawCreatorEmail = process.env.CREATOR_EMAIL || 'eggyatmariansyah@gmail.com';
+      const creatorEmail = rawCreatorEmail.replace(/^['"]|['"]$/g, '').trim();
+      const isSuperAdmin = user?.tier === 'superadministrator' || (user?.email && user.email.toLowerCase() === creatorEmail.toLowerCase());
+
+      if (isSuperAdmin) {
         // No limit!
       } else if (user?.tier === 'premium') {
         const startOfToday = new Date();
@@ -53,9 +57,18 @@ export class PRDController {
           throw new ForbiddenError('Batas harian tercapai. Pengguna Premium hanya dapat membuat maksimal 5 PRD per hari.');
         }
       } else {
-        const countTotal = await prisma.pRDDocument.count({ where: { userId: req.user.id } });
-        if (countTotal >= 1) {
-          throw new ForbiddenError('Batas tercapai. Pengguna free tier hanya dapat membuat 1 PRD. Silakan upgrade ke Premium!');
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const countLastThirtyDays = await prisma.pRDDocument.count({
+          where: {
+            userId: req.user.id,
+            createdAt: {
+              gte: thirtyDaysAgo,
+            },
+          },
+        });
+        if (countLastThirtyDays >= 2) {
+          throw new ForbiddenError('Batas tercapai. Pengguna free tier hanya dapat membuat maksimal 2 PRD per bulan. Silakan upgrade ke Premium!');
         }
       }
       const doc = await this.prdService.createDocument(req.body, req.user.id);
@@ -116,7 +129,11 @@ export class PRDController {
         throw new ForbiddenError('Pengguna tidak ditemukan.');
       }
 
-      if (user.tier === 'superadministrator') {
+      const rawCreatorEmail = process.env.CREATOR_EMAIL || 'eggyatmariansyah@gmail.com';
+      const creatorEmail = rawCreatorEmail.replace(/^['"]|['"]$/g, '').trim();
+      const isSuperAdmin = user.tier === 'superadministrator' || user.email.toLowerCase() === creatorEmail.toLowerCase();
+
+      if (isSuperAdmin) {
         // No limit!
       } else if (user.tier === 'premium') {
         const startOfToday = new Date();
@@ -133,9 +150,18 @@ export class PRDController {
           throw new ForbiddenError('Batas harian tercapai. Pengguna Premium hanya dapat membuat maksimal 5 PRD per hari.');
         }
       } else {
-        const countTotal = await prisma.pRDDocument.count({ where: { userId: req.user.id } });
-        if (countTotal >= 1) {
-          throw new ForbiddenError('Batas tercapai. Pengguna free tier hanya dapat membuat 1 PRD. Silakan upgrade ke Premium!');
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const countLastThirtyDays = await prisma.pRDDocument.count({
+          where: {
+            userId: req.user.id,
+            createdAt: {
+              gte: thirtyDaysAgo,
+            },
+          },
+        });
+        if (countLastThirtyDays >= 2) {
+          throw new ForbiddenError('Batas tercapai. Pengguna free tier hanya dapat membuat maksimal 2 PRD per bulan. Silakan upgrade ke Premium!');
         }
       }
 
@@ -158,7 +184,14 @@ export class PRDController {
 
     try {
       const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-      if (!user || (user.tier !== 'premium' && user.tier !== 'superadministrator')) {
+      if (!user) {
+        throw new ForbiddenError('Pengguna tidak ditemukan.');
+      }
+      const rawCreatorEmail = process.env.CREATOR_EMAIL || 'eggyatmariansyah@gmail.com';
+      const creatorEmail = rawCreatorEmail.replace(/^['"]|['"]$/g, '').trim();
+      const isSuperAdmin = user.tier === 'superadministrator' || user.email.toLowerCase() === creatorEmail.toLowerCase();
+
+      if (user.tier !== 'premium' && !isSuperAdmin) {
         throw new ForbiddenError('Asisten AI hanya tersedia untuk pengguna Premium/Superadministrator. Silakan upgrade!');
       }
 

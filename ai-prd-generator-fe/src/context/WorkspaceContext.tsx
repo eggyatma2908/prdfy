@@ -9,6 +9,7 @@ import { useLanguage } from './LanguageContext';
 export interface WorkspaceContextType {
   user: any;
   isSubscribed: boolean;
+  isSuperAdmin: boolean;
   documents: PRDDocument[];
   versions: PRDVersion[];
   activeDocumentId: string | null;
@@ -124,7 +125,9 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const isSubscribed = user?.tier === 'premium' || user?.tier === 'superadministrator';
+  const isCreator = !!(user?.email && creatorEmail && user.email.toLowerCase() === creatorEmail.toLowerCase());
+  const isSuperAdmin = user?.tier === 'superadministrator' || isCreator;
+  const isSubscribed = user?.tier === 'premium' || isSuperAdmin;
   const activeDoc = documents.find((doc) => doc.id === activeDocumentId);
 
   const showToast = (message: string, type: ToastMessage['type'] = 'success') => {
@@ -210,14 +213,18 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     title: string,
     options: { techStack: string; targetUser: string; tags: string[] }
   ) => {
-    const limit = user?.tier === 'superadministrator' ? Infinity : (isSubscribed ? 5 : 1);
+    const limit = isSuperAdmin ? Infinity : (isSubscribed ? 5 : 2);
     let count = 0;
-    if (isSubscribed) {
+    if (isSuperAdmin) {
+      count = 0;
+    } else if (isSubscribed) {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
       count = documents.filter(doc => new Date(doc.created_at) >= startOfToday).length;
     } else {
-      count = documents.length;
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      count = documents.filter(doc => new Date(doc.created_at) >= thirtyDaysAgo).length;
     }
 
     if (count >= limit) {
@@ -515,6 +522,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
       value={{
         user,
         isSubscribed,
+        isSuperAdmin,
         documents,
         versions,
         activeDocumentId,

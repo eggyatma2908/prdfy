@@ -161,7 +161,7 @@ export const PRDEditor: React.FC<PRDEditorProps> = ({
   onUpgradeClick
 }) => {
   const { locale, setLocale, t } = useLanguage();
-  const { theme, toggleTheme, user } = useWorkspace();
+  const { theme, toggleTheme, isSuperAdmin } = useWorkspace();
   const [docState, setDocState] = useState<PRDDocument>({ ...document });
   const [activeSectionId, setActiveSectionId] = useState(document.sections[0]?.id || '');
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'savedDB'>('saved');
@@ -328,7 +328,7 @@ export const PRDEditor: React.FC<PRDEditorProps> = ({
           </div>
 
           {/* Premium tag or upgrade button */}
-          {user?.tier === 'superadministrator' ? (
+          {isSuperAdmin ? (
             <span className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 bg-violet-50/80 dark:bg-violet-950/40 px-2 sm:px-2.5 py-1 rounded-full border border-violet-200 dark:border-violet-900/50 flex items-center space-x-1 shadow-sm shrink-0" title={t('common.superadmin')}>
               <Crown className="w-3.5 h-3.5 text-violet-500 animate-pulse" />
               <span className="hidden sm:inline">{t('common.superadmin')}</span>
