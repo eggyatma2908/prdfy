@@ -1,0 +1,111 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PRDDocument {
+  id          String       @id
+  title       String
+  description String
+  version     Int          @default(1)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  tags        String       // Comma-separated string of tags (e.g. "SaaS,Auth,v1.0")
+  sections    PRDSection[]
+  versions    PRDVersion[]
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PRDSection {
+  id        String      @id @default(uuid())
+  prdId     String
+  sectionId String      // executive_summary, problem_statement, etc.
+  title     String
+  content   String
+  prd       PRDDocument @relation(fields: [prdId], references: [id], onDelete: Cascade)
+
+  @@index([prdId])
+}
+
+model PRDVersion {
+  id               String      @id @default(uuid())
+  prdId            String
+  version          Int
+  changeSummary    String
+  createdAt        DateTime    @default(now())
+  sectionsSnapshot String      // Stringified JSON array of sections
+  prd              PRDDocument @relation(fields: [prdId], references: [id], onDelete: Cascade)
+
+  @@index([prdId])
+}
+
+model User {
+  id            String        @id
+  name          String
+  email         String        @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+  documents     PRDDocument[]
+  tier          String        @default("free")
+  feedbacks     Feedback[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
