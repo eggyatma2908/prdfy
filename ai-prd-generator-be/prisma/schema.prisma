@@ -59,6 +59,10 @@ model User {
   documents     PRDDocument[]
   tier          String        @default("free")
   feedbacks     Feedback[]
+  freeGen1      DateTime?
+  freeGen2      DateTime?
+  premiumCount  Int           @default(0)
+  premiumLastGen DateTime?
 }
 
 model Session {

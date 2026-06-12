@@ -45,29 +45,28 @@ export class PRDController {
       } else if (user?.tier === 'premium') {
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
-        const countToday = await prisma.pRDDocument.count({
-          where: {
-            userId: req.user.id,
-            createdAt: {
-              gte: startOfToday,
-            },
-          },
-        });
+
+        let countToday = user.premiumCount;
+        const lastGen = user.premiumLastGen;
+
+        if (!lastGen || new Date(lastGen).getTime() < startOfToday.getTime()) {
+          countToday = 0;
+        }
+
         if (countToday >= 5) {
           throw new ForbiddenError('Batas harian tercapai. Pengguna Premium hanya dapat membuat maksimal 5 PRD per hari.');
         }
       } else {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        const countLastThirtyDays = await prisma.pRDDocument.count({
-          where: {
-            userId: req.user.id,
-            createdAt: {
-              gte: thirtyDaysAgo,
-            },
-          },
-        });
-        if (countLastThirtyDays >= 2) {
+
+        const gen1 = user?.freeGen1;
+        const gen2 = user?.freeGen2;
+
+        const isGen1Active = gen1 && new Date(gen1).getTime() >= thirtyDaysAgo.getTime();
+        const isGen2Active = gen2 && new Date(gen2).getTime() >= thirtyDaysAgo.getTime();
+
+        if (isGen1Active && isGen2Active) {
           throw new ForbiddenError('Batas tercapai. Pengguna free tier hanya dapat membuat maksimal 2 PRD per bulan. Silakan upgrade ke Premium!');
         }
       }
@@ -138,29 +137,28 @@ export class PRDController {
       } else if (user.tier === 'premium') {
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
-        const countToday = await prisma.pRDDocument.count({
-          where: {
-            userId: req.user.id,
-            createdAt: {
-              gte: startOfToday,
-            },
-          },
-        });
+
+        let countToday = user.premiumCount;
+        const lastGen = user.premiumLastGen;
+
+        if (!lastGen || new Date(lastGen).getTime() < startOfToday.getTime()) {
+          countToday = 0;
+        }
+
         if (countToday >= 5) {
           throw new ForbiddenError('Batas harian tercapai. Pengguna Premium hanya dapat membuat maksimal 5 PRD per hari.');
         }
       } else {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        const countLastThirtyDays = await prisma.pRDDocument.count({
-          where: {
-            userId: req.user.id,
-            createdAt: {
-              gte: thirtyDaysAgo,
-            },
-          },
-        });
-        if (countLastThirtyDays >= 2) {
+
+        const gen1 = user.freeGen1;
+        const gen2 = user.freeGen2;
+
+        const isGen1Active = gen1 && new Date(gen1).getTime() >= thirtyDaysAgo.getTime();
+        const isGen2Active = gen2 && new Date(gen2).getTime() >= thirtyDaysAgo.getTime();
+
+        if (isGen1Active && isGen2Active) {
           throw new ForbiddenError('Batas tercapai. Pengguna free tier hanya dapat membuat maksimal 2 PRD per bulan. Silakan upgrade ke Premium!');
         }
       }
@@ -169,8 +167,69 @@ export class PRDController {
         throw new BadRequestError('API Server error: GEMINI_API_KEY is not configured on the backend server (.env).');
       }
 
-      this.aiService.generatePRDStream(res, apiKey, model, prompt, title, options, () => {
+      this.aiService.generatePRDStream(res, apiKey, model, prompt, title, options, async () => {
         console.log(`Gemini AI generation stream completed for user: ${req.user.id}`);
+        try {
+          const userObj = await prisma.user.findUnique({ where: { id: req.user.id } });
+          if (!userObj) return;
+
+          if (userObj.tier === 'premium') {
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+
+            let count = userObj.premiumCount;
+            const lastGen = userObj.premiumLastGen;
+
+            if (!lastGen || new Date(lastGen).getTime() < startOfToday.getTime()) {
+              count = 0;
+            }
+
+            await prisma.user.update({
+              where: { id: req.user.id },
+              data: {
+                premiumCount: count + 1,
+                premiumLastGen: new Date(),
+              },
+            });
+          } else if (userObj.tier === 'free') {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            const gen1 = userObj.freeGen1;
+            const gen2 = userObj.freeGen2;
+
+            const isGen1Active = gen1 && new Date(gen1).getTime() >= thirtyDaysAgo.getTime();
+            const isGen2Active = gen2 && new Date(gen2).getTime() >= thirtyDaysAgo.getTime();
+
+            if (!isGen2Active) {
+              await prisma.user.update({
+                where: { id: req.user.id },
+                data: { freeGen2: new Date() },
+              });
+            } else if (!isGen1Active) {
+              await prisma.user.update({
+                where: { id: req.user.id },
+                data: { freeGen1: new Date() },
+              });
+            } else {
+              const date1 = new Date(gen1!);
+              const date2 = new Date(gen2!);
+              if (date1.getTime() < date2.getTime()) {
+                await prisma.user.update({
+                  where: { id: req.user.id },
+                  data: { freeGen1: new Date() },
+                });
+              } else {
+                await prisma.user.update({
+                  where: { id: req.user.id },
+                  data: { freeGen2: new Date() },
+                });
+              }
+            }
+          }
+        } catch (updateErr) {
+          console.error('Error updating user generation limits:', updateErr);
+        }
       });
     } catch (err) {
       next(err);
