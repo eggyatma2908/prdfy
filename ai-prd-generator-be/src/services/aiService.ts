@@ -346,7 +346,7 @@ export class AIService {
     model: string,
     prompt: string,
     title: string,
-    options: { techStack?: string; targetUser?: string },
+    options: { techStack?: string; targetUser?: string; locale?: string },
     sectionConfig: typeof SECTIONS_CONFIG[number],
     contextSections: PRDSection[],
   ): Promise<string> {
@@ -373,9 +373,17 @@ export class AIService {
       `Remember: Generate ONLY the clean markdown content for the section "${sectionConfig.title}" above. ` +
       `Do not include the section title at the start of your output.`;
 
+    const isIndonesian = options.locale === 'id';
+    const systemInstruction = isIndonesian
+      ? SYSTEM_INSTRUCTIONS_SINGLE_SECTION.replace(
+          '- Use professional English and clean Markdown.',
+          '- Use professional Indonesian (Bahasa Indonesia) and clean Markdown.',
+        )
+      : SYSTEM_INSTRUCTIONS_SINGLE_SECTION;
+
     const result = await this.generateWithSDK(apiKey, model, {
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-      systemInstruction: SYSTEM_INSTRUCTIONS_SINGLE_SECTION,
+      systemInstruction,
       generationConfig: { maxOutputTokens: sectionConfig.maxTokens },
     });
 
@@ -393,7 +401,7 @@ export class AIService {
     model: string,
     prompt: string,
     title: string,
-    options: { techStack?: string; targetUser?: string },
+    options: { techStack?: string; targetUser?: string; locale?: string },
   ): Promise<PRDSection[]> {
     this.validateApiKey(apiKey);
 
@@ -502,7 +510,7 @@ export class AIService {
     model: string,
     prompt: string,
     title: string,
-    options: { techStack?: string; targetUser?: string },
+    options: { techStack?: string; targetUser?: string; locale?: string },
     onFinished: () => void,
   ): void {
     const requestOrigin = (res as unknown as { req?: { headers?: { origin?: string } } })

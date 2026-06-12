@@ -54,7 +54,7 @@ export const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
 export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { data: session, isPending } = useSession();
   const user = (session?.user as any) || null;
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   const [documents, setDocuments] = useState<PRDDocument[]>([]);
   const [versions, setVersions] = useState<PRDVersion[]>([]);
@@ -323,7 +323,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     };
 
     showToast(t('toasts.composing'), 'info');
-    apiClient.streamPRD(prompt, title, options, onChunk, onComplete, onError);
+    apiClient.streamPRD(prompt, title, { ...options, locale }, onChunk, onComplete, onError);
   };
 
   const applyChatChange = async (sectionId: string, oldContent: string, newContent: string, changeSummary: string) => {

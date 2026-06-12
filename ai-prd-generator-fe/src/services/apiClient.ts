@@ -109,7 +109,7 @@ class ApiClient {
   async streamPRD(
     prompt: string,
     title: string,
-    options: { techStack?: string; targetUser?: string; tags?: string[] },
+    options: { techStack?: string; targetUser?: string; tags?: string[]; locale?: string },
     onChunk: (sections: any[]) => void,
     onComplete: () => void,
     onError: (err: any) => void
