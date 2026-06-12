@@ -1,0 +1,428 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Apple-Style Monochrome System Colors */
+  --color-apple-gray-50: #f5f5f7;      /* Apple soft gray */
+  --color-apple-gray-100: #e8e8ed;     /* Apple border gray */
+  --color-apple-gray-150: #d2d2d7;
+  --color-apple-gray-200: #d2d2d7;
+  --color-apple-gray-300: #86868b;
+  --color-apple-gray-400: #6e6e73;
+  --color-apple-gray-500: #1d1d1f;     /* Apple deep dark gray/black */
+  --color-apple-gray-600: #000000;     /* Apple pure black */
+  --color-apple-gray-glow: rgba(0, 0, 0, 0.03);
+
+  --color-apple-charcoal-50: #f5f5f7;
+  --color-apple-charcoal-500: #515154;     /* Apple secondary gray */
+  --color-apple-charcoal-glow: rgba(0, 0, 0, 0.02);
+
+  --color-apple-silver-50: #fafafc;
+  --color-apple-silver-100: #e8e8ed;
+  --color-apple-silver-500: #86868b;    /* Apple muted gray */
+  --color-apple-silver-600: #6e6e73;    /* Apple label gray */
+  --color-apple-silver-glow: rgba(0, 0, 0, 0.01);
+
+  --color-apple-dark: #1d1d1f;
+  --color-apple-light: #ffffff;
+  --color-apple-border: #d2d2d7;
+
+  --font-sans: "Inter", "SF Pro Display", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif";
+  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", "monospace";
+
+  --shadow-futuristic: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.01);
+  --shadow-glow-blue: 0 4px 24px rgba(0, 0, 0, 0.04);
+  --shadow-glow-violet: 0 4px 24px rgba(0, 0, 0, 0.03);
+  --shadow-glow-cyan: 0 4px 24px rgba(0, 0, 0, 0.02);
+  --shadow-glass: inset 0 1px 0 0 rgba(255, 255, 255, 0.6), 0 4px 24px rgba(0, 0, 0, 0.02);
+
+  --background-image-grid-pattern: none;
+  --background-image-apple-gradient: none;
+
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: none;
+}
+
+@layer base {
+  * {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+  }
+  body {
+    @apply selection:bg-zinc-200 selection:text-zinc-900 bg-background text-foreground;
+  }
+  /* Fix for hardware-accelerated/transformed elements blur in Chrome/Windows */
+  div, button, input, p, h1, h2, h3, h4, h5, h6, span {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-style: flat;
+  }
+
+  /* Global cursor pointer for all interactive elements as requested */
+  button, select, input[type="submit"], input[type="button"], [role="button"], a {
+    cursor: pointer !important;
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Custom Scrollbar for Minimalist UI */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Apple Minimalist Background */
+.bg-grid-glow {
+  background-color: #f5f5f7;
+}
+
+/* Apple Minimalist Card */
+.glass-panel {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+}
+
+.glass-panel-glow {
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.scanner-line {
+  display: none !important;
+}
+
+/* Styled Markdown Content for PRD Rendering */
+.prd-content h1 {
+  @apply font-bold text-zinc-900 border-b border-zinc-200 pb-2 mb-4 mt-6 text-2xl font-sans;
+}
+
+.prd-content h2 {
+  @apply font-bold text-zinc-900 mt-5 mb-3 text-xl font-sans;
+}
+
+.prd-content h3 {
+  @apply font-semibold text-zinc-800 mt-4 mb-2 text-lg font-sans;
+}
+
+.prd-content p {
+  @apply text-zinc-800 mb-4 leading-relaxed text-sm;
+}
+
+.prd-content ul {
+  @apply list-disc pl-5 mb-4 text-zinc-800 space-y-1.5 text-sm;
+}
+
+.prd-content ol {
+  @apply list-decimal pl-5 mb-4 text-zinc-800 space-y-1.5 text-sm;
+}
+
+.prd-content li {
+  @apply text-zinc-800 leading-relaxed;
+}
+
+.prd-content table {
+  @apply min-w-full divide-y divide-zinc-200 border border-zinc-200 rounded-lg overflow-hidden mb-5 text-sm;
+}
+
+.prd-content th {
+  @apply bg-zinc-50 px-4 py-2.5 text-left text-xs font-bold text-zinc-900 uppercase tracking-wider;
+}
+
+.prd-content td {
+  @apply px-4 py-2 border-t border-zinc-200 text-zinc-800 text-sm align-top;
+}
+
+.prd-content code {
+  @apply font-mono text-xs text-zinc-900 bg-zinc-100 px-1.5 py-0.5 rounded border border-zinc-200;
+}
+
+.prd-content pre {
+  @apply bg-zinc-950 text-zinc-50 p-4 rounded-lg overflow-x-auto my-4 font-mono text-xs border border-zinc-800 shadow-sm leading-relaxed;
+}
+
+.prd-content pre code {
+  @apply text-zinc-50 bg-transparent p-0 border-0 rounded-none;
+}
+
+.prd-content blockquote {
+  @apply border-l-4 border-zinc-900 pl-4 py-1.5 italic text-zinc-700 bg-zinc-50 rounded-r-md my-4 text-sm;
+}
+
+.prd-content hr {
+  @apply my-6 border-zinc-200;
+}
+
+/* Highlighting specific elements (Insertions/Deletions) in Diffs */
+.diff-insert {
+  @apply bg-emerald-50 text-emerald-800 border-l-2 border-emerald-500 px-1 py-0.5 rounded-r;
+}
+
+.diff-delete {
+  @apply bg-rose-50 text-rose-800 border-l-2 border-rose-500 px-1 py-0.5 rounded-r line-through opacity-70;
+}
+
+/* Premium Styling for Mermaid Diagrams */
+.mermaid-wrapper {
+  transition: all 0.3s ease;
+}
+
+.mermaid-diagram-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 1.5rem !important;
+  max-width: 100% !important;
+}
+
+.mermaid-diagram-container svg {
+  max-width: 100% !important;
+  height: auto !important;
+  background-color: transparent !important;
+}
+
+@media print {
+  .mermaid-wrapper {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 1cm 0 !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .mermaid-diagram-container {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+  /* Matikan zoom transform pada saat cetak/PDF agar diagram tidak terpotong atau menghilang */
+  .mermaid-diagram-container > div {
+    transform: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+  .mermaid-diagram-container svg {
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    filter: invert(1) hue-rotate(180deg) !important; /* Inversi warna agar teks/garis putih menjadi hitam pada kertas */
+  }
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+.dark .bg-grid-glow {
+  background-color: oklch(0.145 0 0);
+}
+
+.dark .glass-panel {
+  background-color: oklch(0.205 0 0);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Premium Shifting Font Color Animation */
+@keyframes text-gradient-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.prd-title-animate {
+  background: linear-gradient(to right, #000000, #86868b, #ffffff, #86868b, #000000);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-gradient-animation 6s ease infinite;
+}
+
+/* Smooth transitions for theme switching */
+body, main, header, aside, .glass-panel, button, textarea, select, input, .prd-content {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease, box-shadow 0.2s ease;
+}
+
+/* Dark Mode Styles for Markdown Content */
+.dark .prd-content h1 {
+  @apply text-zinc-100 border-zinc-800;
+}
+.dark .prd-content h2 {
+  @apply text-zinc-100 border-zinc-800;
+}
+.dark .prd-content h3 {
+  @apply text-zinc-200;
+}
+.dark .prd-content p, .dark .prd-content li {
+  @apply text-zinc-300;
+}
+.dark .prd-content table {
+  @apply divide-zinc-800 border-zinc-800 bg-zinc-900/40;
+}
+.dark .prd-content th {
+  @apply bg-zinc-900 text-zinc-100;
+}
+.dark .prd-content td {
+  @apply border-zinc-800 text-zinc-300;
+}
+.dark .prd-content code {
+  @apply text-zinc-200 bg-zinc-900 border-zinc-800;
+}
+.dark .prd-content blockquote {
+  @apply border-zinc-700 text-zinc-400 bg-zinc-900/60;
+}
+.dark .prd-content hr {
+  @apply border-zinc-800;
+}
+
+/* Dark mode for Shifting Font Color Animation */
+.dark .prd-title-animate {
+  background: linear-gradient(to right, #ffffff, #86868b, #3a3a3c, #86868b, #ffffff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-gradient-animation 6s ease infinite;
+}

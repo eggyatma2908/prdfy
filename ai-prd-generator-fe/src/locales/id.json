@@ -1,0 +1,223 @@
+{
+  "common": {
+    "appName": "PRDfy",
+    "premium": "Premium",
+    "superadmin": "Super Admin",
+    "upgrade": "Upgrade Premium",
+    "logout": "Logout",
+    "login": "Masuk",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "back": "Kembali",
+    "saving": "Menyimpan perubahan...",
+    "saved": "Semua perubahan disimpan",
+    "savedDB": "Semua perubahan disimpan ke database",
+    "aiAssistant": "Asisten AI",
+    "export": "Ekspor",
+    "darkMode": "Mode Gelap",
+    "lightMode": "Mode Terang"
+  },
+  "sidebar": {
+    "activeControl": "Active Control",
+    "fileHistory": "Riwayat Berkas",
+    "emptyFiles": "Berkas Kosong",
+    "emptyDesc": "Mulai membuat PRD menggunakan panel generator.",
+    "untitled": "Draft Tanpa Judul",
+    "deletePrd": "Hapus PRD",
+    "fetching": "Memuat Basis Data..."
+  },
+  "form": {
+    "title": "AI PRD Workspace",
+    "subtitle": "Ubah coretan ide menjadi spesifikasi produk yang komprehensif dalam hitungan detik.",
+    "loadingTitle": "Menyusun Dokumen Spesifikasi",
+    "loadingSubtitle": "AI sedang menyusun PRD Anda...",
+    "tip": "Tip: AI menjaga konteks dokumen secara penuh untuk memastikan korelasi antar bagian yang konsisten.",
+    "coreIdea": "Ide Utama / Deskripsi Fitur",
+    "placeholder": "Contoh: Buatkan PRD untuk sistem login satu halaman yang mendukung OAuth Google dan Github, serta validasi 2-faktor (2FA) via aplikasi authenticator...",
+    "selectSample": "Pilih Ide Sampel (Klik untuk mengisi):",
+    "resetSelected": "Reset Pilihan",
+    "advancedSettings": "Pengaturan Tambahan",
+    "prdTitle": "Judul PRD (Kustom)",
+    "prdTitlePlaceholder": "Contoh: Checkout Platform B2B",
+    "techStack": "Tech Stack (pisahkan dengan koma)",
+    "techStackPlaceholder": "Contoh: React, NestJS, MySQL",
+    "targetUsers": "Target Pengguna",
+    "targetUsersPlaceholder": "Contoh: Staf Logistik, Admin Utama",
+    "tags": "Tag (pisahkan dengan koma)",
+    "tagsPlaceholder": "Contoh: Security, Auth, v1.0",
+    "footerText": "PRD yang di-generate disimpan di database",
+    "generateButton": "Buat PRD dengan AI",
+    "loadingSteps": [
+      "Menganalisis ide produk dan persyaratan...",
+      "Membuat ringkasan dan spesifikasi kebutuhan...",
+      "Merancang fitur utama dan alur kerja bisnis...",
+      "Membuat alur pengguna dan arsitektur sistem...",
+      "Membuat skema database dan relasi...",
+      "Mempersiapkan tech stack dan strategi pengujian...",
+      "Memfinalisasi dokumen PRD siap produksi..."
+    ],
+    "samples": {
+      "saas": {
+        "label": "B2B SaaS Checkout",
+        "text": "Sistem checkout satu halaman untuk B2B SaaS dengan pelengkapan otomatis alamat Google Maps dan ringkasan keranjang belanja dinamis."
+      },
+      "mobile": {
+        "label": "Mobile HR Attendance",
+        "text": "Aplikasi kehadiran karyawan seluler menggunakan pemindaian wajah biometrik, pembatasan geo-fencing GPS, dan mode offline."
+      },
+      "api": {
+        "label": "Multi-tenant Inventory API",
+        "text": "RESTful CRUD API untuk pelacakan inventaris multi-gudang dengan pembatasan laju (rate limiting), validasi skema Zod, dan otorisasi JWT."
+      },
+      "cli": {
+        "label": "CLI Secret Scanner",
+        "text": "Alat CLI internal pengembang untuk memindai file git commit lokal dan mendeteksi kunci API atau kata sandi database yang bocor."
+      }
+    }
+  },
+  "editor": {
+    "documentOutline": "Outline Dokumen",
+    "documentId": "ID Dokumen:",
+    "editMarkdown": "Sunting Markdown",
+    "splitView": "Tampilan Terpisah",
+    "documentPreview": "Pratinjau Dokumen",
+    "editHeader": "Sunting:",
+    "markdownFormat": "Format Markdown",
+    "writePlaceholder": "Tulis isi bagian untuk {section}...",
+    "writeGeneralPlaceholder": "Tulis konten di sini...",
+    "previewHeader": "Hasil Pratinjau Dokumen (Real-time Render)",
+    "htmlOutput": "HTML Output"
+  },
+  "chat": {
+    "lockedTitle": "Asisten AI Khusus Premium",
+    "lockedDescription": "Buka kekuatan revisi AI interaktif secara otomatis, penyusunan outline otomatis, dan pembuatan skema kode dengan beralih ke Premium.",
+    "welcome": "Halo Developer! Saya siap membantu merevisi dokumen **\"{title}\"**.\n\nAnda bisa mengetik instruksi perubahan dalam bahasa alami, contoh:\n* *\"tambahkan user story baru untuk admin\"*\n* *\"perjelas bagian latensi respon di persyaratan non-fungsional\"*\n* *\"tambahkan fitur pengingat keranjang belanja terbuang\"*",
+    "failedRevision": "Gagal memproses revisi lewat server: {error}",
+    "approved": "(Perubahan telah Anda setujui dan diterapkan ke dalam dokumen)",
+    "rejected": "(Perubahan ditolak)",
+    "reviewChanges": "Review Perubahan Bagian: {section}",
+    "changeSummary": "Ulasan Perubahan: {summary}",
+    "reject": "Tolak",
+    "apply": "Terapkan",
+    "aiReviewing": "AI sedang meninjau instruksi...",
+    "inputText": "Ketik instruksi revisi...",
+    "shiftEnter": "Shift+Enter untuk baris baru",
+    "contextLoaded": "Konteks PRD aktif ter-load otomatis",
+    "chips": {
+      "story": {
+        "label": "Tambah User Story",
+        "text": "tambahkan user story baru untuk admin keuangan"
+      },
+      "nfr": {
+        "label": "Detail Kinerja NFR",
+        "text": "perjelas persyaratan non-fungsional untuk SLA latensi respons API"
+      },
+      "constraints": {
+        "label": "Tambah Batasan Fitur",
+        "text": "tambahkan batasan fitur di luar cakupan untuk integrasi gateway pembayaran luar negeri"
+      }
+    }
+  },
+  "history": {
+    "title": "Riwayat Versi",
+    "currentlyActive": "Versi Aktif Sekarang",
+    "activeDesc": "Diperbarui baru saja. Menyimpan semua perubahan otomatis.",
+    "savedBackups": "Backup Tersimpan",
+    "manualBackup": "Simpan manual berkas",
+    "noHistory": "Belum ada riwayat backup",
+    "noHistoryDesc": "Versi backup akan dicatat secara otomatis ketika Anda menyetujui usulan perubahan dari AI Chat.",
+    "footer": "Semua snapshots disimpan secara permanen di basis data lokal peramban Anda.",
+    "versionBackups": "Cadangan Versi",
+    "backupSnapshot": "SNAPSHOT CADANGAN",
+    "developer": "Pengembang"
+  },
+  "auth": {
+    "welcomeTitleSignup": "Daftar Akun Baru",
+    "welcomeTitleSignin": "Masuk ke Workspace",
+    "welcomeToast": "Selamat datang! Workspace berhasil dimuat.",
+    "logoutToast": "Berhasil logout dari sistem.",
+    "welcomeDescSignup": "Buat akun untuk mulai menyimpan dokumen PRD Anda secara terpusat di server.",
+    "welcomeDescSignin": "Gunakan kredensial Anda untuk mengakses PRD yang tersimpan di database.",
+    "fullName": "Nama Lengkap",
+    "fullNamePlaceholder": "Masukkan nama lengkap",
+    "email": "Alamat Email",
+    "password": "Kata Sandi",
+    "signIn": "Masuk",
+    "registerNow": "Daftar Sekarang",
+    "googleSignIn": "Masuk dengan Google",
+    "switchSignup": "Sudah punya akun? Masuk di sini",
+    "switchSignin": "Belum punya akun? Daftar di sini",
+    "requiredName": "Nama lengkap wajib diisi.",
+    "requiredPassword": "Kata sandi minimal 8 karakter.",
+    "sessionExpiredToast": "Sesi Anda telah berakhir. Silakan masuk kembali."
+  },
+  "export": {
+    "title": "Export Dokumen",
+    "downloadMarkdown": "Download Markdown (.md)",
+    "downloadMarkdownDesc": "Unduh berkas markdown mentah secara instan.",
+    "printPdf": "Cetak / Simpan PDF",
+    "printPdfDesc": "Buka dialog cetak browser dengan layout profesional.",
+    "pushNotion": "Push ke Notion Page",
+    "pushNotionDesc": "Sinkronkan konten PRD langsung ke Workspace Notion.",
+    "exportGDocs": "Ekspor ke Google Docs",
+    "exportGDocsDesc": "Buat dokumen baru di Google Drive terhubung.",
+    "comingSoon": "Segera Hadir",
+    "tip": "Tip: Gunakan opsi **Cetak PDF** lalu pilih \"Save as PDF\" di dialog cetak browser Anda. Layout khusus cetak kami akan secara otomatis merapikan dokumen."
+  },
+  "modals": {
+    "rollbackTitle": "Rollback Versi PRD",
+    "rollbackMessage": "Apakah Anda yakin ingin mengembalikan dokumen ke Versi {version}? Versi saat ini akan disimpan sebagai cadangan otomatis sebelum ditimpa.",
+    "rollbackConfirm": "Kembalikan",
+    "deleteTitle": "Hapus Dokumen PRD",
+    "deleteMessage": "Apakah Anda yakin ingin menghapus dokumen PRD \"{title}\" secara permanen? Seluruh riwayat versi untuk dokumen ini juga akan dihapus.",
+    "deleteConfirm": "Hapus"
+  },
+  "upgradeModal": {
+    "title": "Upgrade Akun Anda",
+    "description": "Buka batasan gratis dan dapatkan kemampuan penuh asisten AI serta ekspor dokumen PDF.",
+    "featuresTitle": "Fitur yang Terbuka:",
+    "feature1": "Hingga 5 PRD per hari (Premium) atau Tanpa Batas (Super Admin)",
+    "feature2": "Akses penuh ke Asisten AI untuk merevisi dokumen sepuasnya",
+    "feature3": "Unduh dokumen dalam format PDF dan Markdown secara bebas",
+    "feature4": "Simpan versi dan riwayat cadangan dokumen secara otomatis",
+    "verifying": "Memverifikasi Pembayaran...",
+    "action": "Aktifkan Premium - Rp55.000 / Bulan",
+    "actionSuper": "Aktifkan Super Admin - Tanpa Batas"
+  },
+  "toasts": {
+    "connectError": "Gagal tersambung ke Server Backend.",
+    "deleteSuccess": "Dokumen berhasil dihapus.",
+    "deleteError": "Gagal menghapus dokumen dari server.",
+    "syncError": "Gagal menyinkronkan dokumen ke server backend.",
+    "createSuccess": "Dokumen PRD berhasil dibuat!",
+    "apiFailed": "API Server gagal: {error}",
+    "composing": "Memulai penyusunan dokumen oleh AI...",
+    "revisionApplied": "Revisi AI berhasil diterapkan ke dokumen!",
+    "revisionSyncError": "Gagal menyinkronkan revisi dokumen ke server: {error}",
+    "rollbackSuccess": "Dokumen dikembalikan ke Versi {version}!",
+    "rollbackSyncError": "Gagal menyelaraskan rollback di server: {error}",
+    "upgradeSuccess": "Selamat! Akun Anda telah di-upgrade ke Premium Tier.",
+    "upgradeSuperadminSuccess": "Selamat! Akun Anda telah di-upgrade ke tier Super Administrator.",
+    "upgradeError": "Gagal memproses langganan ke server.",
+    "autoBackup": "Backup otomatis sebelum rollback ke v{version}",
+    "limitExceeded": "Batas tercapai. Pengguna free tier hanya dapat membuat 1 PRD. Silakan upgrade ke Premium!",
+    "premiumLimitExceeded": "Batas harian tercapai. Pengguna Premium hanya dapat membuat maksimal 5 PRD per hari."
+  },
+  "mermaid": {
+    "preview": "Pratinjau Diagram",
+    "fullscreenMode": "Mode Layar Penuh",
+    "close": "Tutup",
+    "zoomIn": "Perbesar",
+    "zoomOut": "Perkecil",
+    "reset": "Reset Tampilan",
+    "copy": "Salin Kode",
+    "copied": "Tersalin!",
+    "editInstruction": "Edit kode diagram di bawah, lalu klik ikon Play (▶) untuk memperbarui",
+    "viewCode": "Lihat/Edit Kode",
+    "compile": "Jalankan Ulang (Compile)",
+    "errorTitle": "Kesalahan Sintaks Mermaid",
+    "resetOriginal": "Reset Kode Awal",
+    "loading": "Memuat diagram..."
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "common": {
+    "appName": "PRDfy",
+    "premium": "Premium",
+    "superadmin": "Super Admin",
+    "upgrade": "Upgrade to Premium",
+    "logout": "Logout",
+    "login": "Sign In",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "back": "Back",
+    "saving": "Saving changes...",
+    "saved": "All changes saved",
+    "savedDB": "All changes saved in database",
+    "aiAssistant": "AI Assistant",
+    "export": "Export",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  },
+  "sidebar": {
+    "activeControl": "Active Control",
+    "fileHistory": "File History",
+    "emptyFiles": "Empty Files",
+    "emptyDesc": "Start generating PRDs using the generator panel.",
+    "untitled": "Untitled Draft",
+    "deletePrd": "Delete PRD",
+    "fetching": "Fetching DB..."
+  },
+  "form": {
+    "title": "AI PRD Workspace",
+    "subtitle": "Turn scribbled ideas into comprehensive product specifications in seconds.",
+    "loadingTitle": "Composing Specification Document",
+    "loadingSubtitle": "AI is composing your PRD...",
+    "tip": "Tip: AI maintains full document context to ensure consistent correlation between sections.",
+    "coreIdea": "Core Idea / Feature Description",
+    "placeholder": "Example: Create a PRD for a one-page login system supporting Google and Github OAuth, and 2-factor authentication (2FA) via authenticator app...",
+    "selectSample": "Select Sample Idea (Click to fill):",
+    "resetSelected": "Reset Selection",
+    "advancedSettings": "Additional Settings",
+    "prdTitle": "PRD Title (Custom)",
+    "prdTitlePlaceholder": "Example: B2B Checkout Platform",
+    "techStack": "Tech Stack (comma-separated)",
+    "techStackPlaceholder": "Example: React, NestJS, MySQL",
+    "targetUsers": "Target Users",
+    "targetUsersPlaceholder": "Example: Logistics Staff, Main Admin",
+    "tags": "Tags (comma-separated)",
+    "tagsPlaceholder": "Example: Security, Auth, v1.0",
+    "footerText": "Generated PRDs are stored in database.",
+    "generateButton": "Generate PRD with AI",
+    "loadingSteps": [
+      "Analyzing product idea and requirements...",
+      "Generating overview and requirements specification...",
+      "Designing core features and business workflows...",
+      "Creating user flow and system architecture...",
+      "Generating database schema and relationships...",
+      "Preparing tech stack and testing strategy...",
+      "Finalizing production-ready PRD document..."
+    ],
+    "samples": {
+      "saas": {
+        "label": "B2B SaaS Checkout",
+        "text": "One-page checkout system for B2B SaaS with Google Maps address autocomplete and dynamic shopping cart summary."
+      },
+      "mobile": {
+        "label": "Mobile HR Attendance",
+        "text": "Mobile employee attendance application using biometric face scan, GPS geo-fencing constraints, and offline mode."
+      },
+      "api": {
+        "label": "Multi-tenant Inventory API",
+        "text": "RESTful CRUD API for multi-warehouse inventory tracking with rate limiting, Zod schema validation, and JWT authorization."
+      },
+      "cli": {
+        "label": "CLI Secret Scanner",
+        "text": "Developer internal CLI tool to scan local git commit files and detect leaked API keys or database passwords."
+      }
+    }
+  },
+  "editor": {
+    "documentOutline": "Document Outline",
+    "documentId": "Document ID:",
+    "editMarkdown": "Edit Markdown",
+    "splitView": "Split View",
+    "documentPreview": "Document Preview",
+    "editHeader": "Edit:",
+    "markdownFormat": "Markdown Format",
+    "writePlaceholder": "Write content for {section}...",
+    "writeGeneralPlaceholder": "Write content here...",
+    "previewHeader": "Document Preview (Real-time Render)",
+    "htmlOutput": "HTML Output"
+  },
+  "chat": {
+    "lockedTitle": "AI Assistant is Premium Only",
+    "lockedDescription": "Unlock the power of interactive AI revisions, automated outline restructuring, and code schema generations by upgrading to Premium.",
+    "welcome": "Hi Developer! I am ready to help you revise the document **\"{title}\"**.\n\nYou can type change instructions in natural language, for example:\n* *\"add a new user story for admin\"*\n* *\"clarify the response latency part in the non-functional requirements\"*\n* *\"add an abandoned shopping cart reminder feature\"*",
+    "failedRevision": "Failed to process revision via server: {error}",
+    "approved": "(You have approved the changes and applied them to the document)",
+    "rejected": "(Changes rejected)",
+    "reviewChanges": "Review Changes for Section: {section}",
+    "changeSummary": "Change Summary: {summary}",
+    "reject": "Reject",
+    "apply": "Apply",
+    "aiReviewing": "AI is reviewing instructions...",
+    "inputText": "Type revision instructions...",
+    "shiftEnter": "Shift+Enter for new line",
+    "contextLoaded": "Active PRD context loaded automatically",
+    "chips": {
+      "story": {
+        "label": "Add User Story",
+        "text": "add a new user story for the finance admin"
+      },
+      "nfr": {
+        "label": "Detail NFR Performance",
+        "text": "clarify the non-functional requirements for the API response latency SLA"
+      },
+      "constraints": {
+        "label": "Add Feature Constraints",
+        "text": "add out-of-scope feature constraints for foreign payment gateway integration"
+      }
+    }
+  },
+  "history": {
+    "title": "Version History",
+    "currentlyActive": "Currently Active Version",
+    "activeDesc": "Recently updated. Automatically saving all changes.",
+    "savedBackups": "Saved Backups",
+    "manualBackup": "Manual backup snapshot",
+    "noHistory": "No backup history yet",
+    "noHistoryDesc": "Backup snapshots are recorded automatically when you apply recommended changes from the AI Chat.",
+    "footer": "All snapshots are stored permanently in your local browser database.",
+    "versionBackups": "Version Backups",
+    "backupSnapshot": "BACKUP SNAPSHOT",
+    "developer": "Developer"
+  },
+  "auth": {
+    "welcomeTitleSignup": "Create New Account",
+    "welcomeTitleSignin": "Sign In to Workspace",
+    "welcomeToast": "Welcome! Workspace loaded successfully.",
+    "logoutToast": "Successfully logged out.",
+    "welcomeDescSignup": "Create an account to store your PRDs centrally on the server.",
+    "welcomeDescSignin": "Use your credentials to access the PRDs stored in the database.",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Enter your full name",
+    "email": "Email Address",
+    "password": "Password",
+    "signIn": "Sign In",
+    "registerNow": "Register Now",
+    "googleSignIn": "Sign In with Google",
+    "switchSignup": "Already have an account? Sign In here",
+    "switchSignin": "Don't have an account? Register here",
+    "requiredName": "Full name is required.",
+    "requiredPassword": "Password must be at least 8 characters.",
+    "sessionExpiredToast": "Your session has expired. Please sign in again."
+  },
+  "export": {
+    "title": "Export Document",
+    "downloadMarkdown": "Download Markdown (.md)",
+    "downloadMarkdownDesc": "Download raw markdown file instantly.",
+    "printPdf": "Print / Save PDF",
+    "printPdfDesc": "Open browser print dialog with a professional layout.",
+    "pushNotion": "Push to Notion Page",
+    "pushNotionDesc": "Sync PRD content directly to Notion Workspace.",
+    "exportGDocs": "Export to Google Docs",
+    "exportGDocsDesc": "Create a new document in connected Google Drive.",
+    "comingSoon": "Coming Soon",
+    "tip": "Tip: Use the **Print PDF** option then choose \"Save as PDF\" in your browser's print dialog. Our print layout automatically formats the document."
+  },
+  "modals": {
+    "rollbackTitle": "Rollback PRD Version",
+    "rollbackMessage": "Are you sure you want to restore the document to Version {version}? Your current version will be backed up automatically before overwriting.",
+    "rollbackConfirm": "Restore",
+    "deleteTitle": "Delete PRD Document",
+    "deleteMessage": "Are you sure you want to permanently delete the PRD document \"{title}\"? All version history for this document will also be deleted.",
+    "deleteConfirm": "Delete"
+  },
+  "upgradeModal": {
+    "title": "Upgrade Your Account",
+    "description": "Unlock free limits and get full AI assistant capabilities and PDF exports.",
+    "featuresTitle": "Unlocked Features:",
+    "feature1": "Up to 5 PRDs per day (Premium) or Unlimited (Super Admin)",
+    "feature2": "Full access to AI Assistant for unlimited revisions",
+    "feature3": "Download documents in both PDF and Markdown formats freely",
+    "feature4": "Automatically save versions and document backup history",
+    "verifying": "Verifying Payment...",
+    "action": "Activate Premium - IDR 55,000 / Month",
+    "actionSuper": "Activate Super Admin - Unlimited"
+  },
+  "toasts": {
+    "connectError": "Failed to connect to backend server.",
+    "deleteSuccess": "Document deleted successfully.",
+    "deleteError": "Failed to delete document from server.",
+    "syncError": "Failed to sync document to backend server.",
+    "createSuccess": "PRD document created successfully!",
+    "apiFailed": "API Server failed: {error}",
+    "composing": "Starting document composition by AI...",
+    "revisionApplied": "AI revision applied to document successfully!",
+    "revisionSyncError": "Failed to sync document revision to server: {error}",
+    "rollbackSuccess": "Document restored to Version {version}!",
+    "rollbackSyncError": "Failed to align rollback on server: {error}",
+    "upgradeSuccess": "Congratulations! Your account has been upgraded to Premium Tier.",
+    "upgradeSuperadminSuccess": "Congratulations! Your account has been upgraded to Super Administrator tier.",
+    "upgradeError": "Failed to process subscription on server.",
+    "autoBackup": "Auto-backup before rollback to v{version}",
+    "limitExceeded": "Limit reached. Free tier users can only create 1 PRD. Please upgrade to Premium!",
+    "premiumLimitExceeded": "Limit reached. Premium tier users can only create up to 5 PRDs per day."
+  },
+  "mermaid": {
+    "preview": "Diagram Preview",
+    "fullscreenMode": "Fullscreen Mode",
+    "close": "Close",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "reset": "Reset View",
+    "copy": "Copy Code",
+    "copied": "Copied!",
+    "editInstruction": "Edit the diagram code below, then click the Play icon (▶) to update",
+    "viewCode": "View/Edit Code",
+    "compile": "Run Again (Compile)",
+    "errorTitle": "Mermaid Syntax Error",
+    "resetOriginal": "Reset Original Code",
+    "loading": "Loading diagram..."
+  }
+}

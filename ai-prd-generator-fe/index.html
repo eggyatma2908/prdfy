@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><style>@keyframes pulse %7B 0%, 100% %7B opacity: 0.6; %7D 50% %7B opacity: 1; transform: scale(1.08); transform-origin: 12px 12px; %7D %7D .core %7B animation: pulse 2s infinite ease-in-out; fill: %23ffffff; fill-opacity: 0.3; %7D .pins %7B animation: pulse 1.5s infinite ease-in-out alternate; %7D</style><rect width=%2216%22 height=%2216%22 x=%224%22 y=%224%22 rx=%222%22/><rect class=%22core%22 width=%226%22 height=%226%22 x=%229%22 y=%229%22 rx=%221%22/><path class=%22pins%22 d=%22M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3%22/></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRDfy - AI PRD Generator</title>
+    <!-- Google Fonts: Outfit (headings), Inter (body), JetBrains Mono (monospaced) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        if (window.mermaid) {
+          window.mermaid.initialize({
+            startOnLoad: false,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            flowchart: { useMaxWidth: true, htmlLabels: true },
+            er: { useMaxWidth: true }
+          });
+        }
+      });
+    </script>
+  </head>
+  <body class="bg-white text-slate-800 antialiased font-sans">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
