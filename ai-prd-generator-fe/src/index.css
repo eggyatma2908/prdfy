@@ -427,3 +427,21 @@ body, main, header, aside, .glass-panel, button, textarea, select, input, .prd-c
   -webkit-text-fill-color: transparent;
   animation: text-gradient-animation 6s ease infinite;
 }
+
+/* Hide Microsoft Edge / IE default eye reveal button inside password inputs */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* Custom horizontal scrollbar for prompt tags chips in AI chat panel */
+.chips-scroll-container::-webkit-scrollbar {
+  height: 4px;
+}
+.chips-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+}
+.dark .chips-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+}

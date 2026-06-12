@@ -262,7 +262,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
           {/* Inputs Drawer */}
           <div className="p-4 border-t border-slate-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shrink-0">
             {/* Suggestion prompt chips */}
-            <div className="flex items-center space-x-1.5 overflow-x-auto whitespace-nowrap pb-1 scrollbar-none">
+            <div className="flex items-center space-x-1.5 overflow-x-auto whitespace-nowrap pb-2 chips-scroll-container scroll-smooth">
               {promptTags.map((tag, idx) => (
                 <button
                   key={idx}
