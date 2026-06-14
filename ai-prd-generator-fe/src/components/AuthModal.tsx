@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Mail, Lock, User, X, Rocket, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { signIn, signUp } from '../lib/auth-client';
+import { signIn, signUp, authClient } from '../lib/auth-client';
 import { useLanguage } from '../context/LanguageContext';
 
 interface AuthModalProps {
@@ -19,15 +19,33 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const { t } = useLanguage();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [isVerificationResending, setIsVerificationResending] = useState(false);
+  const [verificationResent, setVerificationResent] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+
+  const checkPasswordStrength = (pass: string) => {
+    return {
+      hasMinLength: pass.length >= 8,
+      hasUppercase: /[A-Z]/.test(pass),
+      hasNumber: /[0-9]/.test(pass),
+      hasSymbol: /[^A-Za-z0-9]/.test(pass)
+    };
+  };
 
   const handleGoogleSignIn = async () => {
     setError(null);
+    setSuccessMessage(null);
+    setShowResend(false);
+    setVerificationResent(false);
     setLoading(true);
     try {
       sessionStorage.setItem('just_logged_in', 'true');
@@ -42,9 +60,57 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!email.trim()) return;
+    setIsVerificationResending(true);
+    setError(null);
+    try {
+      const result = await authClient.sendVerificationEmail({
+        email: email.trim(),
+        callbackURL: window.location.origin,
+      });
+      if (result?.error) {
+        setError(result.error.message || "Gagal mengirim ulang email verifikasi.");
+      } else {
+        setVerificationResent(true);
+        setShowResend(false);
+      }
+    } catch (err: any) {
+      setError(err.message || "Terjadi kesalahan saat mengirim ulang email verifikasi.");
+    } finally {
+      setIsVerificationResending(false);
+    }
+  };
+
+  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccessMessage(null);
+    setLoading(true);
+    try {
+      const result = await authClient.requestPasswordReset({
+        email: email.trim(),
+        redirectTo: window.location.origin,
+      });
+      if (result?.error) {
+        setError(result.error.message || "Gagal mengirim link reset kata sandi.");
+      } else {
+        setSuccessMessage(t('auth.resetSentSuccess') || "Link reset kata sandi telah dikirim! Silakan periksa kotak masuk email Anda.");
+        setIsForgotPassword(false);
+      }
+    } catch (err: any) {
+      setError(err.message || "Terjadi kesalahan saat memproses permintaan.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
+    setShowResend(false);
+    setVerificationResent(false);
     setLoading(true);
 
     try {
@@ -54,20 +120,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           setLoading(false);
           return;
         }
-        if (password.length < 8) {
-          setError(t('auth.requiredPassword'));
+        
+        // Enforce strict password validation
+        const strength = checkPasswordStrength(password);
+        if (!strength.hasMinLength || !strength.hasUppercase || !strength.hasNumber || !strength.hasSymbol) {
+          setError(t('auth.requiredPassword') || "Kata sandi tidak memenuhi semua kriteria keamanan.");
           setLoading(false);
           return;
         }
+
         const result = await signUp.email({
           email: email.trim(),
           password,
           name: name.trim(),
+          callbackURL: window.location.origin,
         });
         if (result?.error) {
           setError(result.error.message || "Failed to register a new account.");
         } else {
-          onSuccess();
+          setSuccessMessage(t('auth.verificationSent') || "Registrasi sukses! Silakan periksa inbox email Anda untuk verifikasi.");
         }
       } else {
         const result = await signIn.email({
@@ -75,7 +146,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           password,
         });
         if (result?.error) {
-          setError(result.error.message || "Incorrect email or password. Please check your credentials.");
+          if (result.error.code === 'EMAIL_NOT_VERIFIED') {
+            setError(t('auth.emailNotVerified') || "Email Anda belum diverifikasi. Silakan periksa inbox email Anda.");
+            setShowResend(true);
+          } else {
+            setError(result.error.message || "Incorrect email or password. Please check your credentials.");
+          }
         } else {
           onSuccess();
         }
@@ -94,6 +170,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const handleSwitchTab = () => {
     setIsSignUp(!isSignUp);
     setError(null);
+    setSuccessMessage(null);
+    setShowResend(false);
+    setVerificationResent(false);
     setEmail('');
     setPassword('');
     setName('');
@@ -133,138 +212,298 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </button>
               )}
 
-              {/* Header */}
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/10">
-                  <Rocket className="w-6 h-6 animate-pulse" />
+              {successMessage ? (
+                <div className="flex flex-col items-center text-center space-y-5 py-4">
+                  <div className="w-16 h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800/50 border border-border text-foreground flex items-center justify-center shadow-lg shadow-zinc-500/5 animate-pulse">
+                    <Mail className="w-7 h-7 text-foreground" />
+                  </div>
+                  <h3 className="text-xl font-extrabold text-foreground tracking-tight">
+                    Periksa Email Anda
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed max-w-[300px]">
+                    {successMessage}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSuccessMessage(null);
+                      setIsSignUp(false);
+                      setIsForgotPassword(false);
+                    }}
+                    className="w-full py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-2xl font-bold text-xs tracking-wider uppercase shadow-md transition-all cursor-pointer mt-2"
+                  >
+                    Kembali ke Login
+                  </button>
                 </div>
-                <h3 className="text-2xl font-extrabold text-foreground tracking-tight mt-2">
-                  {isSignUp ? t('auth.welcomeTitleSignup') : t('auth.welcomeTitleSignin')}
-                </h3>
-                <p className="text-xs text-muted-foreground max-w-[280px] leading-relaxed">
-                  {isSignUp
-                    ? t('auth.welcomeDescSignup')
-                    : t('auth.welcomeDescSignin')}
-                </p>
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center space-x-2.5 text-xs text-destructive animate-slideDown">
-                  <AlertCircle className="w-4.5 h-4.5 text-destructive shrink-0 mt-0.5" />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {isSignUp && (
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase pl-1">{t('auth.fullName')}</label>
-                    <div className="relative">
-                      <User className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 transform -translate-y-1/2" />
-                      <input
-                        type="text"
-                        required
-                        placeholder={t('auth.fullNamePlaceholder')}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-foreground placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-200 dark:focus:border-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-all"
-                      />
+              ) : isForgotPassword ? (
+                <div className="flex flex-col space-y-6">
+                  {/* Forgot Password Header */}
+                  <div className="flex flex-col items-center text-center space-y-2">
+                    <div className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/10">
+                      <Lock className="w-6 h-6 animate-pulse" />
                     </div>
+                    <h3 className="text-2xl font-extrabold text-foreground tracking-tight mt-2">
+                      {t('auth.forgotPasswordTitle')}
+                    </h3>
+                    <p className="text-xs text-muted-foreground max-w-[280px] leading-relaxed">
+                      {t('auth.forgotPasswordDesc')}
+                    </p>
                   </div>
-                )}
 
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase pl-1">{t('auth.email')}</label>
-                  <div className="relative">
-                    <Mail className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 transform -translate-y-1/2" />
-                    <input
-                      type="email"
-                      required
-                      placeholder="name@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-foreground placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-200 dark:focus:border-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-all"
-                    />
-                  </div>
-                </div>
+                  {/* Error Message */}
+                  {error && (
+                    <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center space-x-2.5 text-xs text-destructive animate-slideDown">
+                      <AlertCircle className="w-4.5 h-4.5 text-destructive shrink-0" />
+                      <span>{error}</span>
+                    </div>
+                  )}
 
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase pl-1">{t('auth.password')}</label>
-                  <div className="relative">
-                    <Lock className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 transform -translate-y-1/2" />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-10 pr-10 py-3 text-xs text-foreground placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-200 dark:focus:border-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-all"
-                    />
+                  {/* Forgot Password Form */}
+                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase pl-1">{t('auth.email')}</label>
+                      <div className="relative">
+                        <Mail className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 transform -translate-y-1/2" />
+                        <input
+                          type="email"
+                          required
+                          placeholder="name@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-foreground placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-200 dark:focus:border-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-all"
+                        />
+                      </div>
+                    </div>
+
                     <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors cursor-pointer"
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-2xl font-bold text-xs tracking-wider uppercase shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {loading ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-primary-foreground" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          <span>{t('auth.sendResetLink')}...</span>
+                        </>
+                      ) : (
+                        <span>{t('auth.sendResetLink')}</span>
+                      )}
+                    </button>
+                  </form>
+
+                  {/* Back to Login link */}
+                  <div className="text-center pt-2 border-t border-border">
+                    <button
+                      onClick={() => {
+                        setIsForgotPassword(false);
+                        setError(null);
+                      }}
+                      className="text-xs text-foreground/85 hover:text-foreground font-semibold hover:underline transition-all focus:outline-none cursor-pointer"
+                    >
+                      {t('auth.backToLogin')}
                     </button>
                   </div>
                 </div>
+              ) : (
+                <>
+                  {/* Header */}
+                  <div className="flex flex-col items-center text-center space-y-2">
+                    <div className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/10">
+                      <Rocket className="w-6 h-6 animate-pulse" />
+                    </div>
+                    <h3 className="text-2xl font-extrabold text-foreground tracking-tight mt-2">
+                      {isSignUp ? t('auth.welcomeTitleSignup') : t('auth.welcomeTitleSignin')}
+                    </h3>
+                    <p className="text-xs text-muted-foreground max-w-[280px] leading-relaxed">
+                      {isSignUp
+                        ? t('auth.welcomeDescSignup')
+                        : t('auth.welcomeDescSignin')}
+                    </p>
+                  </div>
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-2xl font-bold text-xs tracking-wider uppercase shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-primary-foreground" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      <span>{isSignUp ? t('auth.registerNow') : t('auth.signIn')}...</span>
-                    </>
-                  ) : (
-                    <span>{isSignUp ? t('auth.registerNow') : t('auth.signIn')}</span>
+                  {/* Error Message */}
+                  {error && (
+                    <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/20 flex flex-col space-y-2 text-xs text-destructive animate-slideDown">
+                      <div className="flex items-center space-x-2.5">
+                        <AlertCircle className="w-4.5 h-4.5 text-destructive shrink-0 mt-0.5" />
+                        <span>{error}</span>
+                      </div>
+                      {showResend && (
+                        <button
+                          type="button"
+                          disabled={isVerificationResending}
+                          onClick={handleResendVerification}
+                          className="text-left text-xs font-bold text-primary hover:underline pl-7 cursor-pointer disabled:opacity-50"
+                        >
+                          {isVerificationResending 
+                            ? `${t('auth.resendVerification')}...` 
+                            : t('auth.resendVerification')}
+                        </button>
+                      )}
+                      {verificationResent && (
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 pl-7 font-medium">
+                          {t('auth.verificationResent')}
+                        </span>
+                      )}
+                    </div>
                   )}
-                </button>
-              </form>
 
-              {/* Divider */}
-              <div className="relative flex items-center py-1.5 no-print">
-                <div className="flex-grow border-t border-border" />
-                <span className="flex-shrink mx-4 text-[10px] text-muted-foreground font-bold font-mono tracking-wider uppercase">Atau</span>
-                <div className="flex-grow border-t border-border" />
-              </div>
+                  {/* Form */}
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    {isSignUp && (
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase pl-1">{t('auth.fullName')}</label>
+                        <div className="relative">
+                          <User className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 transform -translate-y-1/2" />
+                          <input
+                            type="text"
+                            required
+                            placeholder={t('auth.fullNamePlaceholder')}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-foreground placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-200 dark:focus:border-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-all"
+                          />
+                        </div>
+                      </div>
+                    )}
 
-              {/* Google Auth Button */}
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                className="w-full py-3 px-4 bg-slate-50 dark:bg-zinc-800/40 hover:bg-slate-100 dark:hover:bg-zinc-800 text-foreground border border-border rounded-2xl font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center space-x-2.5 cursor-pointer shadow-xs no-print"
-              >
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
-                </svg>
-                <span>{t('auth.googleSignIn')}</span>
-              </button>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase pl-1">{t('auth.email')}</label>
+                      <div className="relative">
+                        <Mail className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 transform -translate-y-1/2" />
+                        <input
+                          type="email"
+                          required
+                          placeholder="name@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-foreground placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-200 dark:focus:border-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-all"
+                        />
+                      </div>
+                    </div>
 
-              {/* Switch Mode Footer */}
-              <div className="text-center pt-2 border-t border-border">
-                <button
-                  onClick={handleSwitchTab}
-                  className="text-xs text-foreground/80 hover:text-foreground font-semibold hover:underline transition-all focus:outline-none cursor-pointer"
-                >
-                  {isSignUp
-                    ? t('auth.switchSignup')
-                    : t('auth.switchSignin')}
-                </button>
-              </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase pl-1">{t('auth.password')}</label>
+                      <div className="relative">
+                        <Lock className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 transform -translate-y-1/2" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          required
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-10 pr-10 py-3 text-xs text-foreground placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-200 dark:focus:border-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-all"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors cursor-pointer"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Password Strength Indicator for Sign Up */}
+                    {isSignUp && password.length > 0 && (
+                      <div className="mt-2.5 p-3 rounded-2xl bg-slate-50 dark:bg-zinc-850/50 border border-slate-100 dark:border-zinc-800/80 text-[11px] space-y-1.5 animate-slideDown">
+                        <p className="font-bold text-muted-foreground text-[9px] uppercase tracking-wider mb-1">Kata Sandi Kuat / Password Strength:</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1 font-sans">
+                          <div className={`flex items-center space-x-1.5 font-medium ${checkPasswordStrength(password).hasMinLength ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'}`}>
+                            <span className="text-xs">{checkPasswordStrength(password).hasMinLength ? '✓' : '✗'}</span>
+                            <span>{t('auth.criteriaLength')}</span>
+                          </div>
+                          <div className={`flex items-center space-x-1.5 font-medium ${checkPasswordStrength(password).hasUppercase ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-550'}`}>
+                            <span className="text-xs">{checkPasswordStrength(password).hasUppercase ? '✓' : '✗'}</span>
+                            <span>{t('auth.criteriaUppercase')}</span>
+                          </div>
+                          <div className={`flex items-center space-x-1.5 font-medium ${checkPasswordStrength(password).hasNumber ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-555'}`}>
+                            <span className="text-xs">{checkPasswordStrength(password).hasNumber ? '✓' : '✗'}</span>
+                            <span>{t('auth.criteriaNumber')}</span>
+                          </div>
+                          <div className={`flex items-center space-x-1.5 font-medium ${checkPasswordStrength(password).hasSymbol ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-555'}`}>
+                            <span className="text-xs">{checkPasswordStrength(password).hasSymbol ? '✓' : '✗'}</span>
+                            <span>{t('auth.criteriaSymbol')}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Forgot Password Link for Sign In */}
+                    {!isSignUp && (
+                      <div className="flex justify-end px-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsForgotPassword(true);
+                            setError(null);
+                            setSuccessMessage(null);
+                          }}
+                          className="text-[11px] font-bold text-muted-foreground hover:text-foreground hover:underline transition-all cursor-pointer bg-transparent border-none p-0 outline-none"
+                        >
+                          {t('auth.forgotPasswordLink')}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-2xl font-bold text-xs tracking-wider uppercase shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-primary-foreground" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          <span>{isSignUp ? t('auth.registerNow') : t('auth.signIn')}...</span>
+                        </>
+                      ) : (
+                        <span>{isSignUp ? t('auth.registerNow') : t('auth.signIn')}</span>
+                      )}
+                    </button>
+                  </form>
+
+                  {/* Divider */}
+                  <div className="relative flex items-center py-1.5 no-print">
+                    <div className="flex-grow border-t border-border" />
+                    <span className="flex-shrink mx-4 text-[10px] text-muted-foreground font-bold font-mono tracking-wider uppercase">Atau</span>
+                    <div className="flex-grow border-t border-border" />
+                  </div>
+
+                  {/* Google Auth Button */}
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    className="w-full py-3 px-4 bg-slate-50 dark:bg-zinc-800/40 hover:bg-slate-100 dark:hover:bg-zinc-800 text-foreground border border-border rounded-2xl font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center space-x-2.5 cursor-pointer shadow-xs no-print"
+                  >
+                    <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" fill="#FBBC05" />
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
+                    </svg>
+                    <span>{t('auth.googleSignIn')}</span>
+                  </button>
+
+                  {/* Switch Mode Footer */}
+                  <div className="text-center pt-2 border-t border-border">
+                    <button
+                      onClick={handleSwitchTab}
+                      className="text-xs text-foreground/80 hover:text-foreground font-semibold hover:underline transition-all focus:outline-none cursor-pointer"
+                    >
+                      {isSignUp
+                        ? t('auth.switchSignup')
+                        : t('auth.switchSignin')}
+                    </button>
+                  </div>
+                </>
+              )}
             </motion.div>
           </div>
         </div>

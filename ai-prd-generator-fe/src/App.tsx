@@ -15,6 +15,7 @@ import { FeedbackModal } from './components/FeedbackModal';
 import { LandingPage } from './components/LandingPage';
 import { apiClient } from './services/apiClient';
 import { AdminDashboardModal } from './components/AdminDashboardModal';
+import { ResetPasswordForm } from './components/ResetPasswordForm';
 
 const PRDEditor = React.lazy(() =>
   import('./components/PRDEditor').then((m) => ({ default: m.PRDEditor }))
@@ -63,12 +64,33 @@ function AppContent() {
   } = useWorkspace();
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [resetToken, setResetToken] = useState<string | null>(null);
 
   useEffect(() => {
     apiClient.logVisitor(window.location.pathname, document.referrer);
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      setResetToken(token);
+      // Clean query parameters from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, []);
 
   const { locale, setLocale, t } = useLanguage();
+
+  if (resetToken) {
+    return (
+      <ResetPasswordForm
+        token={resetToken}
+        onComplete={() => {
+          setResetToken(null);
+          setIsAuthOpen(true);
+        }}
+      />
+    );
+  }
 
   if (!user) {
     return (
