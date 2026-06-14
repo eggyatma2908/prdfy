@@ -16,7 +16,8 @@
     "aiAssistant": "AI Assistant",
     "export": "Export",
     "darkMode": "Dark Mode",
-    "lightMode": "Light Mode"
+    "lightMode": "Light Mode",
+    "adminDashboard": "Admin Dashboard"
   },
   "sidebar": {
     "activeControl": "Active Control",
@@ -245,7 +246,7 @@
     "f6Title": "Feedback Loop",
     "f6Desc": "In-app feedback modal saves rating stars and qualitative suggestions directly to the Postgres database.",
     "pricingTitle": "Simple, Transparent Tiers",
-    "pricingSub": "Choose the pricing plan that fits your execution pace.",
+    "pricingSub": "Choose the subscription plan that best suits your needs.",
     "freeName": "Free Tier",
     "freePrice": "Rp 0",
     "freeSub": "Ideal for validation",
@@ -273,5 +274,33 @@
     "ctaSuper": "System Owner only",
     "footerRights": "All rights reserved.",
     "footerStack": "Powered by React, Express, PostgreSQL, and AI API."
+  },
+  "admin": {
+    "dashboardTitle": "PRDfy Admin Dashboard",
+    "dashboardSubtitle": "Real-time traffic monitoring and user feedback",
+    "openDashboard": "Open Admin Dashboard",
+    "sendFeedback": "Send Feedback",
+    "refresh": "Refresh",
+    "close": "Close",
+    "fetchError": "Failed to fetch admin statistics.",
+    "visits": "Visits",
+    "prdDocuments": "PRD Documents",
+    "users": "Users",
+    "satisfaction": "Satisfaction",
+    "recentVisitorsTab": "Recent Visitors (50)",
+    "feedbackTab": "User Feedback",
+    "ipAddress": "IP Address",
+    "browser": "Browser",
+    "path": "Path",
+    "referrer": "Referrer",
+    "timestamp": "Timestamp",
+    "loadingVisitors": "Loading visitor logs...",
+    "noVisitors": "No visitor logs recorded yet.",
+    "user": "User",
+    "rating": "Rating",
+    "commentFeedback": "Comment / Feedback",
+    "submittedAt": "Submitted At",
+    "loadingFeedback": "Loading feedback data...",
+    "noFeedback": "No user feedback submitted yet."
   }
 }

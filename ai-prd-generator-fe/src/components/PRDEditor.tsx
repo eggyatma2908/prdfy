@@ -39,6 +39,7 @@ interface PRDEditorProps {
   onToggleSidebar?: () => void;
   isSubscribed?: boolean;
   onUpgradeClick?: () => void;
+  onAdminClick?: () => void;
 }
 
 export function parseMarkdownToHTML(markdown: string): string {
@@ -158,7 +159,8 @@ export const PRDEditor: React.FC<PRDEditorProps> = ({
   isHistorySidebarOpen,
   onToggleSidebar,
   isSubscribed = false,
-  onUpgradeClick
+  onUpgradeClick,
+  onAdminClick
 }) => {
   const { locale, setLocale, t } = useLanguage();
   const { theme, toggleTheme, isSuperAdmin } = useWorkspace();
@@ -327,12 +329,15 @@ export const PRDEditor: React.FC<PRDEditorProps> = ({
             </button>
           </div>
 
-          {/* Premium tag or upgrade button */}
           {isSuperAdmin ? (
-            <span className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 bg-violet-50/80 dark:bg-violet-950/40 px-2 sm:px-2.5 py-1 rounded-full border border-violet-200 dark:border-violet-900/50 flex items-center space-x-1 shadow-sm shrink-0" title={t('common.superadmin')}>
+            <button
+              onClick={onAdminClick}
+              title={t('admin.openDashboard')}
+              className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 bg-violet-50/80 dark:bg-violet-950/40 hover:bg-violet-100/80 dark:hover:bg-violet-900/60 px-2 sm:px-2.5 py-1 rounded-full border border-violet-200 dark:border-violet-900/50 flex items-center space-x-1 shadow-sm shrink-0 transition-all cursor-pointer"
+            >
               <Crown className="w-3.5 h-3.5 text-violet-500 animate-pulse" />
               <span className="hidden sm:inline">{t('common.superadmin')}</span>
-            </span>
+            </button>
           ) : isSubscribed ? (
             <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 bg-amber-50/80 dark:bg-amber-950/40 px-2 sm:px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-900/50 flex items-center space-x-1 shadow-sm shrink-0" title={t('common.premium')}>
               <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />

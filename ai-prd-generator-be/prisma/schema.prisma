@@ -113,3 +113,12 @@ model Feedback {
 
   @@index([userId])
 }
+
+model VisitorLog {
+  id        String   @id @default(uuid())
+  ipAddress String?
+  userAgent String?
+  path      String   @default("/")
+  referrer  String?
+  createdAt DateTime @default(now())
+}

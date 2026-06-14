@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { PRDGeneratorForm } from './components/PRDGeneratorForm';
 import { ExportModal } from './components/ExportModal';
 import { ToastContainer } from './components/ToastContainer';
@@ -13,6 +13,8 @@ import { useWorkspace } from './hooks/useWorkspace';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { FeedbackModal } from './components/FeedbackModal';
 import { LandingPage } from './components/LandingPage';
+import { apiClient } from './services/apiClient';
+import { AdminDashboardModal } from './components/AdminDashboardModal';
 
 const PRDEditor = React.lazy(() =>
   import('./components/PRDEditor').then((m) => ({ default: m.PRDEditor }))
@@ -59,6 +61,12 @@ function AppContent() {
     theme,
     toggleTheme
   } = useWorkspace();
+
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+
+  useEffect(() => {
+    apiClient.logVisitor(window.location.pathname, document.referrer);
+  }, []);
 
   const { locale, setLocale, t } = useLanguage();
 
@@ -120,6 +128,7 @@ function AppContent() {
             onToggleSidebar={() => setHistorySidebarOpen(!isHistorySidebarOpen)}
             isSubscribed={isSubscribed}
             onUpgradeClick={() => setUpgradeModalOpen(true)}
+            onAdminClick={() => setIsAdminOpen(true)}
           />
         </Suspense>
       );
@@ -298,10 +307,14 @@ function AppContent() {
               {user ? (
                 <div className="flex items-center space-x-1.5 sm:space-x-2.5">
                   {isSuperAdmin ? (
-                    <span className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 bg-violet-50/80 dark:bg-violet-950/40 px-2 sm:px-2.5 py-1 rounded-full border border-violet-200 dark:border-violet-900/50 flex items-center space-x-1 shadow-sm shrink-0" title={t('common.superadmin')}>
+                    <button
+                      onClick={() => setIsAdminOpen(true)}
+                      title={t('admin.openDashboard')}
+                      className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 bg-violet-50/80 dark:bg-violet-950/40 hover:bg-violet-100/80 dark:hover:bg-violet-900/60 px-2 sm:px-2.5 py-1 rounded-full border border-violet-200 dark:border-violet-900/50 flex items-center space-x-1 shadow-sm shrink-0 transition-all cursor-pointer"
+                    >
                       <Crown className="w-3.5 h-3.5 text-violet-500 animate-pulse" />
                       <span className="hidden sm:inline">{t('common.superadmin')}</span>
-                    </span>
+                    </button>
                   ) : isSubscribed ? (
                     <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 bg-amber-50/80 dark:bg-amber-950/40 px-2 sm:px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-900/50 flex items-center space-x-1 shadow-sm shrink-0" title={t('common.premium')}>
                       <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
@@ -323,7 +336,7 @@ function AppContent() {
                   <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300 hidden md:inline">{user.name}</span>
                   <button
                     onClick={() => setIsFeedbackOpen(true)}
-                    title={locale === 'id' ? 'Kirim Masukan' : 'Send Feedback'}
+                    title={t('admin.sendFeedback')}
                     className="p-1.5 sm:p-2 text-slate-450 dark:text-white hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800/80 rounded-xl transition-all cursor-pointer"
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -455,6 +468,7 @@ function AppContent() {
         </div>
       )}
       <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+      <AdminDashboardModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
     </div>
   );
 }

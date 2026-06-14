@@ -1,32 +1,83 @@
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2318181b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><style>@media (prefers-color-scheme: dark) %7B .rocket-path %7B stroke: %23ffffff; %7D %7D @media (prefers-color-scheme: light) %7B .rocket-path %7B stroke: %2318181b; %7D %7D</style><path class=%22rocket-path%22 d=%22M4.5 16.5c-1.5 1.26-2 3.42-2 3.42s2.16-.5 3.42-2c1.24-1.46 1.45-3.42 1.45-3.42s-1.41-.21-2.87-1.45Z%22/><path class=%22rocket-path%22 d=%22M12 15c-3 1-5 2-7 4.5 2.5-2 3.5-4 4.5-7l6.5-6.5c.9-.9 2.3-.9 3.2 0 .9.9.9 2.3 0 3.2L12 15Z%22/><path class=%22rocket-path%22 d=%22M9 15 2 22%22/><path class=%22rocket-path%22 d=%22M15 9 22 2%22/><path class=%22rocket-path%22 d=%22M9 9c0-1.7 1.3-3 3-3%22/></svg>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PRDfy - AI PRD Generator</title>
-    <!-- Google Fonts: Outfit (headings), Inter (body), JetBrains Mono (monospaced) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        if (window.mermaid) {
-          window.mermaid.initialize({
-            startOnLoad: false,
-            theme: 'neutral',
-            securityLevel: 'loose',
-            flowchart: { useMaxWidth: true, htmlLabels: true },
-            er: { useMaxWidth: true }
-          });
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2318181b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><style>@media (prefers-color-scheme: dark) %7B .rocket-path %7B stroke: %23ffffff; %7D %7D @media (prefers-color-scheme: light) %7B .rocket-path %7B stroke: %2318181b; %7D %7D</style><path class=%22rocket-path%22 d=%22M4.5 16.5c-1.5 1.26-2 3.42-2 3.42s2.16-.5 3.42-2c1.24-1.46 1.45-3.42 1.45-3.42s-1.41-.21-2.87-1.45Z%22/><path class=%22rocket-path%22 d=%22M12 15c-3 1-5 2-7 4.5 2.5-2 3.5-4 4.5-7l6.5-6.5c.9-.9 2.3-.9 3.2 0 .9.9.9 2.3 0 3.2L12 15Z%22/><path class=%22rocket-path%22 d=%22M9 15 2 22%22/><path class=%22rocket-path%22 d=%22M15 9 22 2%22/><path class=%22rocket-path%22 d=%22M9 9c0-1.7 1.3-3 3-3%22/></svg>" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRDfy - AI PRD Generator</title>
+  <meta name="description"
+    content="PRDfy adalah AI PRD & Spec Generator instan untuk membantu Product Manager, Developer, UI/UX Designer, dan tim teknologi menyusun dokumen kebutuhan produk (PRD) otomatis. Sangat ideal untuk mempercepat workflow Vibe Coding." />
+  <meta name="keywords"
+    content="prd generator, ai prd generator, vibe coding, spec to code, product requirements document, developer prd, ui ux specifications, buat prd otomatis, prdfy, saas prd, product manager, system architecture design" />
+  <link rel="canonical" href="https://prdfy.space" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://prdfy.space" />
+  <meta property="og:title" content="PRDfy - AI PRD & Spec Generator untuk Tim Product & Tech" />
+  <meta property="og:description"
+    content="Buat PRD, spesifikasi teknis, arsitektur sistem, dan diagram alur instan menggunakan kecerdasan buatan. Maksimalkan kecepatan kolaborasi tim dan vibe coding." />
+  <meta property="og:image" content="https://prdfy.space/og-image.png" />
+  <meta property="og:site_name" content="PRDfy" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://prdfy.space" />
+  <meta name="twitter:title" content="PRDfy - AI PRD & Spec Generator untuk PM & Developer" />
+  <meta name="twitter:description"
+    content="Ubah ide kasar menjadi dokumen spesifikasi teknis (PRD) yang siap dieksekusi tim UI/UX & Developer secara otomatis. Solusi tepat untuk mengakselerasi Vibe Coding." />
+  <meta name="twitter:image" content="https://prdfy.space/og-image.png" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PRDfy",
+        "operatingSystem": "All",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "AI-powered Product Requirements Document (PRD) and tech specification generator that helps product managers, developers, and UI/UX designers create detailed specifications, flowcharts, and user stories instantly for faster vibe coding.",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "128"
         }
-      });
+      }
     </script>
-  </head>
-  <body class="bg-white text-slate-800 antialiased font-sans">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- Google Fonts: Outfit (headings), Inter (body), JetBrains Mono (monospaced) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.mermaid) {
+        window.mermaid.initialize({
+          startOnLoad: false,
+          theme: 'neutral',
+          securityLevel: 'loose',
+          flowchart: { useMaxWidth: true, htmlLabels: true },
+          er: { useMaxWidth: true }
+        });
+      }
+    });
+  </script>
+</head>
+
+<body class="bg-white text-slate-800 antialiased font-sans">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../middlewares/auth';
 import { PRDService } from '../services/prdService';
 import { AIService } from '../services/aiService';
@@ -264,4 +264,86 @@ export class PRDController {
       next(err);
     }
   };
+
+  logVisitor = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { path, referrer } = req.body;
+      const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
+      const userAgent = req.headers['user-agent'] || 'Unknown';
+
+      await prisma.visitorLog.create({
+        data: {
+          ipAddress,
+          userAgent,
+          path: path || '/',
+          referrer: referrer || null,
+        }
+      });
+
+      res.sendStatus(200);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getAdminStats = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const rawCreatorEmail = process.env.CREATOR_EMAIL || 'eggyatmariansyah@gmail.com';
+      const creatorEmail = rawCreatorEmail.replace(/^['"]|['"]$/g, '').trim();
+      const isSuperAdmin = req.user?.tier === 'superadministrator' || req.user?.email?.toLowerCase() === creatorEmail.toLowerCase();
+
+      if (!isSuperAdmin) {
+        throw new ForbiddenError('Akses ditolak. Hanya Super Administrator yang dapat mengakses dashboard admin.');
+      }
+
+      const totalVisits = await prisma.visitorLog.count();
+      const totalPRDs = await prisma.pRDDocument.count();
+
+      const users = await prisma.user.findMany({
+        select: { tier: true }
+      });
+      const totalUsers = users.length;
+      const premiumUsers = users.filter(u => u.tier === 'premium').length;
+      const adminUsers = users.filter(u => u.tier === 'superadministrator').length;
+      const freeUsers = totalUsers - premiumUsers - adminUsers;
+
+      const feedbacks = await prisma.feedback.findMany({
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      const recentVisitors = await prisma.visitorLog.findMany({
+        take: 50,
+        orderBy: { createdAt: 'desc' }
+      });
+
+      const avgRating = feedbacks.length > 0
+        ? (feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length).toFixed(1)
+        : '0.0';
+
+      res.json({
+        totalVisits,
+        totalPRDs,
+        users: {
+          total: totalUsers,
+          free: freeUsers,
+          premium: premiumUsers,
+          admin: adminUsers
+        },
+        feedbacks,
+        recentVisitors,
+        avgRating
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
+

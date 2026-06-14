@@ -16,7 +16,8 @@
     "aiAssistant": "Asisten AI",
     "export": "Ekspor",
     "darkMode": "Mode Gelap",
-    "lightMode": "Mode Terang"
+    "lightMode": "Mode Terang",
+    "adminDashboard": "Dashboard Admin"
   },
   "sidebar": {
     "activeControl": "Active Control",
@@ -245,11 +246,11 @@
     "f6Title": "Umpan Balik Pengguna",
     "f6Desc": "Formulir feedback bintang & saran teks langsung tersimpan aman ke database PostgreSQL.",
     "pricingTitle": "Paket Harga Sederhana",
-    "pricingSub": "Pilih paket langganan yang sesuai dengan kecepatan eksekusi Anda.",
+    "pricingSub": "Pilih paket langganan yang sesuai dengan kebutuhan Anda.",
     "freeName": "Free Tier",
     "freePrice": "Rp 0",
     "freeSub": "Ideal untuk validasi awal",
-    "freeFeat1": "2 Dokumen per Bulan",
+    "freeFeat1": "2 Pembuatan PRD / Bulan",
     "freeFeat2": "Ekspor Hanya Format Markdown (.md)",
     "freeFeat3": "Asisten AI Chat Terkunci",
     "freeFeat4": "Riwayat Dokumen Terkunci",
@@ -273,5 +274,33 @@
     "ctaSuper": "Khusus Pemilik",
     "footerRights": "Hak cipta dilindungi undang-undang.",
     "footerStack": "Didukung oleh React, Express, PostgreSQL, dan AI API."
+  },
+  "admin": {
+    "dashboardTitle": "Dashboard Admin PRDfy",
+    "dashboardSubtitle": "Pemantauan trafik real-time dan umpan balik pengguna",
+    "openDashboard": "Buka Dashboard Admin",
+    "sendFeedback": "Kirim Masukan",
+    "refresh": "Segarkan",
+    "close": "Tutup",
+    "fetchError": "Gagal memuat data statistik admin.",
+    "visits": "Kunjungan",
+    "prdDocuments": "Dokumen PRD",
+    "users": "Pengguna",
+    "satisfaction": "Rating Puas",
+    "recentVisitorsTab": "Pengunjung Terbaru (50)",
+    "feedbackTab": "Umpan Balik / Feedback",
+    "ipAddress": "Alamat IP",
+    "browser": "Browser",
+    "path": "Path",
+    "referrer": "Referrer",
+    "timestamp": "Waktu Kunjungan",
+    "loadingVisitors": "Memuat logs pengunjung...",
+    "noVisitors": "Belum ada data logs pengunjung.",
+    "user": "Pengguna",
+    "rating": "Rating",
+    "commentFeedback": "Komentar / Saran",
+    "submittedAt": "Tanggal Kirim",
+    "loadingFeedback": "Memuat umpan balik...",
+    "noFeedback": "Belum ada masukan/umpan balik dari pengguna."
   }
 }

@@ -106,6 +106,22 @@ class ApiClient {
     });
   }
 
+  async logVisitor(path: string, referrer?: string): Promise<void> {
+    try {
+      await fetch(`${this.baseUrl}/api/prd/visitor/log`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path, referrer }),
+      });
+    } catch (err) {
+      console.warn('Gagal mencatat kunjungan:', err);
+    }
+  }
+
+  async fetchAdminStats(): Promise<any> {
+    return this.request<any>('/api/prd/admin/stats');
+  }
+
   async streamPRD(
     prompt: string,
     title: string,

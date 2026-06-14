@@ -23,8 +23,14 @@ router.get('/config', (req, res) => {
   res.json({ creatorEmail });
 });
 
+// Log visitor entry (Public)
+router.post('/visitor/log', prdController.logVisitor);
+
 // Apply auth middleware to all routes below
 router.use(requireAuth);
+
+// Admin stats and metrics dashboard (Admin only)
+router.get('/admin/stats', prdController.getAdminStats);
 
 // Documents CRUD
 router.get('/documents', prdController.getDocuments);
