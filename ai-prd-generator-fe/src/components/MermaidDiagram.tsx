@@ -60,7 +60,7 @@ function sanitizeMermaidErDiagram(code: string): string {
   if (!isErDiagram) return code;
 
   // Match anything inside curly braces, e.g., entity blocks
-  return code.replace(/\{([^}]+)\}/g, (blockContent) => {
+  return code.replace(/\{([^}]+)\}/g, (_, blockContent) => {
     const lines = blockContent.split('\n');
     const sanitizedLines = lines.map((line: string) => {
       const trimmed = line.trim();

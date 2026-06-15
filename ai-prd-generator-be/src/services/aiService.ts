@@ -382,9 +382,9 @@ export class AIService {
     const isIndonesian = options.locale === 'id';
     const systemInstruction = isIndonesian
       ? SYSTEM_INSTRUCTIONS_SINGLE_SECTION.replace(
-          '- Use professional English and clean Markdown.',
-          '- Use professional Indonesian (Bahasa Indonesia) and clean Markdown.',
-        )
+        '- Use professional English and clean Markdown.',
+        '- Use professional Indonesian (Bahasa Indonesia) and clean Markdown.',
+      )
       : SYSTEM_INSTRUCTIONS_SINGLE_SECTION;
 
     const result = await this.generateWithSDK(apiKey, model, {
@@ -502,7 +502,7 @@ export class AIService {
 
     const timeoutGuard = new Promise<never>((_, reject) => {
       timeoutHandle = setTimeout(
-        () => reject(new Error('getChatRevision timeout after 2 minutes')),
+        () => reject(new Error('getChatRevision timeout after 30 seconds')),
         FETCH_TIMEOUT_MS,
       );
     });
