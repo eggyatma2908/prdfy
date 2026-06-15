@@ -192,17 +192,45 @@ export class AIService {
     if (cleaned.endsWith('```')) cleaned = cleaned.slice(0, -3);
     cleaned = cleaned.trim();
 
-    const start = cleaned.indexOf('[');
-    if (start === -1) return this.escapeControlCharacters(cleaned);
+    const firstBrace = cleaned.indexOf('{');
+    const firstBracket = cleaned.indexOf('[');
+    
+    let start = -1;
+    let charOpen = '';
+    let charClose = '';
 
-    let end = cleaned.lastIndexOf(']');
+    if (firstBrace !== -1 && firstBracket !== -1) {
+      if (firstBrace < firstBracket) {
+        start = firstBrace;
+        charOpen = '{';
+        charClose = '}';
+      } else {
+        start = firstBracket;
+        charOpen = '[';
+        charClose = ']';
+      }
+    } else if (firstBrace !== -1) {
+      start = firstBrace;
+      charOpen = '{';
+      charClose = '}';
+    } else if (firstBracket !== -1) {
+      start = firstBracket;
+      charOpen = '[';
+      charClose = ']';
+    }
+
+    if (start === -1) {
+      return this.escapeControlCharacters(cleaned);
+    }
+
+    let end = cleaned.lastIndexOf(charClose);
     while (end > start) {
       const candidate = this.escapeControlCharacters(cleaned.slice(start, end + 1));
       try {
         JSON.parse(candidate);
         return candidate;
       } catch {
-        end = cleaned.lastIndexOf(']', end - 1);
+        end = cleaned.lastIndexOf(charClose, end - 1);
       }
     }
 

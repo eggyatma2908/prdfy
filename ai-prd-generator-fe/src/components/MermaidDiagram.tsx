@@ -77,9 +77,10 @@ function sanitizeMermaidErDiagram(code: string): string {
         lineWithoutComment = line.substring(0, line.length - commentMatch[0].length);
       }
 
-      const tokens = lineWithoutComment.trim().split(/\s+/);
+      const indentation = line.match(/^\s*/)?.[0] || '';
+      const tokens = lineWithoutComment.trim().split(/\s+/).map(t => t.replace(/"/g, ''));
       if (tokens.length <= 2) {
-        return lineWithoutComment + commentStr;
+        return indentation + tokens.join(' ') + commentStr;
       }
 
       const knownKeys = new Set(['PK', 'FK', 'UK', 'NK', 'AK']);
