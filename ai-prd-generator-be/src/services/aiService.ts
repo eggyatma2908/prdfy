@@ -24,6 +24,12 @@ WRONG (will error)  : B[Auth/Session Service]
 RIGHT (must be this): B["Auth/Session Service"]
 Double quotes ARE REQUIRED if the label contains: () / \\ | {} # @ ! ? ~ < > & * or long spaces.
 
+# MERMAID ERDIAGRAM RULES (MUST BE FOLLOWED):
+In Mermaid erDiagram, attributes/columns inside entity curly braces {} can ONLY contain optional key tags of 'PK' or 'FK'.
+- DO NOT use any other key tags (such as 'UK', 'NK', 'AK') or combinations/sequences of keys (such as 'FK UK', 'PK FK').
+- If a column is a primary key, use 'PK' only. If it is a foreign key, use 'FK' only.
+- Do NOT output multiple keys per column, and do NOT output non-standard keys.
+
 # OUTPUT RULES (REQUIRED):
 - Output ONLY the clean markdown content for the section.
 - DO NOT include the section header (e.g., "# 1. Overview") at the beginning of your output, as it is automatically prepended by the system. Start directly with the first sub-section or content body.
@@ -64,7 +70,7 @@ const SECTIONS_CONFIG = [
     id: 'database_schema',
     title: '6. Database Schema',
     maxTokens: 12000,
-    prompt: 'Must start with an ERD diagram using Mermaid erDiagram (erDiagram ...). Use snake_case for database naming (tables and columns). After the diagram, include a data dictionary table with columns: Column Name | Data Type | Constraint | Description. Each table must have clear PK, FK, index recommendation, audit fields (created_at, updated_at, deleted_at), and soft delete strategy.',
+    prompt: 'Must start with an ERD diagram using Mermaid erDiagram (erDiagram ...). IMPORTANT: Attribute columns in erDiagram can only contain the optional key tags of PK or FK. Do NOT use UK, NK, AK, FK UK, or multiple keys. Use snake_case for database naming (tables and columns). After the diagram, include a data dictionary table with columns: Column Name | Data Type | Constraint | Description. Each table must have clear PK, FK, index recommendation, audit fields (created_at, updated_at, deleted_at), and soft delete strategy.',
   },
   {
     id: 'tech_stack_recommendation',
@@ -440,7 +446,7 @@ export class AIService {
   }> {
     this.validateApiKey(apiKey);
 
-    const MAX_SECTION_CHARS = 3000;
+    const MAX_SECTION_CHARS = 50000;
     const sectionsText = currentPRD.sections
       .map(s => {
         const truncated = s.content.length > MAX_SECTION_CHARS
@@ -464,6 +470,10 @@ export class AIService {
       `  }\n` +
       `}\n\n` +
       `IMPORTANT: The 'newContent' field must contain the full markdown content of the modified section, not just the new changes or additions. Keep all original unmodified parts of this section intact within the 'newContent'.\n\n` +
+      `# MERMAID DIAGRAM RULES (MUST BE FOLLOWED):\n` +
+      `- In Mermaid erDiagram, columns/attributes inside entity curly braces {} can ONLY contain optional key tags of 'PK' or 'FK'. Do NOT use any other key tags (e.g. 'UK', 'NK', 'AK') or combinations (e.g. 'FK UK', 'PK FK').\n` +
+      `- If a column is a primary key, use 'PK' only. If it is a foreign key, use 'FK' only. Do NOT output multiple keys per column.\n` +
+      `- Node labels in flowcharts containing special characters like parentheses (), slashes /, or other special characters MUST be wrapped in double quotes (e.g., A["Label (Detail)"]).\n\n` +
       `If no PRD changes are required, set suggestedDiff to null.\n` +
       `Do not output any text outside of the JSON block.`;
 

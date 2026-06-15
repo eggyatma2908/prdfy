@@ -55,6 +55,65 @@ function sanitizeMermaidLabels(code: string): string {
   return cleaned;
 }
 
+function sanitizeMermaidErDiagram(code: string): string {
+  const isErDiagram = /^\s*erDiagram/m.test(code);
+  if (!isErDiagram) return code;
+
+  // Match anything inside curly braces, e.g., entity blocks
+  return code.replace(/\{([^}]+)\}/g, (blockContent) => {
+    const lines = blockContent.split('\n');
+    const sanitizedLines = lines.map((line: string) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('%%')) {
+        return line;
+      }
+
+      // Extract the comment if present
+      const commentMatch = line.match(/\s*"([^"]*)"\s*$/);
+      let commentStr = '';
+      let lineWithoutComment = line;
+      if (commentMatch) {
+        commentStr = commentMatch[0];
+        lineWithoutComment = line.substring(0, line.length - commentMatch[0].length);
+      }
+
+      const tokens = lineWithoutComment.trim().split(/\s+/);
+      if (tokens.length <= 2) {
+        return lineWithoutComment + commentStr;
+      }
+
+      const knownKeys = new Set(['PK', 'FK', 'UK', 'NK', 'AK']);
+      const keyTokens: string[] = [];
+      let keyTokensStartIndex = tokens.length;
+
+      for (let i = tokens.length - 1; i >= 2; i--) {
+        const token = tokens[i].replace(/,/g, '').toUpperCase();
+        if (knownKeys.has(token)) {
+          keyTokens.unshift(token);
+          keyTokensStartIndex = i;
+        } else {
+          break;
+        }
+      }
+
+      if (keyTokens.length > 0) {
+        const validKeys = keyTokens.filter(k => k === 'PK' || k === 'FK');
+        const typeAndNamePart = tokens.slice(0, keyTokensStartIndex).join(' ');
+        const indentation = line.match(/^\s*/)?.[0] || '';
+
+        if (validKeys.length > 0) {
+          return `${indentation}${typeAndNamePart} ${validKeys.join(', ')}${commentStr}`;
+        } else {
+          return `${indentation}${typeAndNamePart}${commentStr}`;
+        }
+      }
+
+      return line;
+    });
+    return `{${sanitizedLines.join('\n')}}`;
+  });
+}
+
 
 export const MermaidDiagram: React.FC<MermaidDiagramProps> = React.memo(({ code }) => {
   const { t } = useLanguage();
@@ -102,7 +161,7 @@ export const MermaidDiagram: React.FC<MermaidDiagramProps> = React.memo(({ code 
       try {
         setError(null);
         setSvg('');
-        const cleanedCode = sanitizeMermaidLabels(activeCode.trim());
+        const cleanedCode = sanitizeMermaidLabels(sanitizeMermaidErDiagram(activeCode.trim()));
         if (!cleanedCode) return;
         document.querySelectorAll(`[id^="mermaid-${baseId}"]`).forEach(el => el.remove());
 
